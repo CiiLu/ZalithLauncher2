@@ -74,7 +74,7 @@
     <string name="date_format">MMM d, yyyy, h:mm:ss aa</string>
     <string name="just_now">agora mesmo</string>
     <string name="minutes_ago">%d minutos atrás</string>
-    <string name="hours_ago">%d horas atrás</string>
+    <string name="hours_ago">%d Horas atrás</string>
     <string name="days_ago">%d dias atrás</string>
     <string name="months_ago">%d meses atrás</string>
     <string name="years_ago">%d anos atrás</string>
@@ -1220,7 +1220,7 @@
     <string name="control_editor_edit_joystick_style_list_empty">Não há estilos de joystick no layout de controle atual</string>
     <string name="control_editor_edit_joystick_style_list_name">Nome do estilo do joystick</string>
     <string name="control_editor_edit_joystick_style_list_delete">Tem certeza de que deseja excluir o estilo de joystick mano? %s</string>
-    <string name="duration_format">%s Dias %s Horas %s Minutos</string>
+    <string name="duration_format">%s Dias ou %s Horas ou %s Minutos</string>
     <string name="saves_manage_playtime">Tempo jogado: %s</string>
     <string name="fm_initializing">Inicializando…</string>
     <string name="fm_init_failed">Falha na inicialização: %s</string>
@@ -1359,7 +1359,7 @@
     <string name="fm_trash_items">Itens: %d</string>
     <string name="fm_trash_size">Tamanho: %s</string>
     <string name="fm_trash_restore">Restaurar</string>
-    <string name="fm_trash_purge">Purgar</string>
+    <string name="fm_trash_purge">Excluir para sempre</string>
     <string name="fm_trash_deleted_at">Excluído: %s</string>
     <string name="fm_trash_clear">Limpar Lixo</string>
     <string name="fm_trash_corrupted">Corrompido (não pode ser restaurado)</string>
