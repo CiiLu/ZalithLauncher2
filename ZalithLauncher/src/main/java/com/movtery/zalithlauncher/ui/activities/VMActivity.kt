@@ -107,6 +107,7 @@ import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
 import com.movtery.zalithlauncher.viewmodel.EventViewModel
 import com.movtery.zalithlauncher.viewmodel.GamepadViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -126,6 +127,11 @@ private const val INTENT_RUN_GAME = "BUNDLE_RUN_GAME"
 private const val INTENT_RUN_JAR = "INTENT_RUN_JAR"
 private const val INTENT_GAME_CONFIG = "INTENT_GAME_CONFIG"
 private const val INTENT_JAR_INFO = "INTENT_JAR_INFO"
+
+/**
+ * 事件驱动尺寸刷新的去抖间隔
+ */
+private val RESIZE_DEBOUNCE = 150L.milliseconds
 
 data class LaunchSession(
     val activityTitle: String,
@@ -568,9 +574,27 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
             if (vmViewModel.isRunning) {
                 delay(50L.milliseconds)
                 withContext(Dispatchers.Main) {
-                    refreshWindowSize(screenSize = vmViewModel.screenSize)
+                    requestRefreshWindowSize(screenSize = vmViewModel.screenSize)
                 }
             }
+        }
+    }
+
+    private var lastWindowSize: IntSize? = null
+    private var refreshSizeJob: Job? = null
+    private var pendingRefreshSize: IntSize? = null
+    /**
+     * 事件驱动的窗口尺寸刷新入口
+     */
+    private fun requestRefreshWindowSize(screenSize: IntSize) {
+        if (screenSize.width <= 0 || screenSize.height <= 0) return
+        pendingRefreshSize = screenSize
+        refreshSizeJob?.cancel()
+        refreshSizeJob = lifecycleScope.launch {
+            delay(RESIZE_DEBOUNCE)
+            val size = pendingRefreshSize ?: return@launch
+            pendingRefreshSize = null
+            refreshWindowSize(screenSize = size)
         }
     }
 
@@ -586,19 +610,25 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
             }
         }
 
-        val windowWidth = getDisplayPixels(screenSize.width)
-        val windowHeight = getDisplayPixels(screenSize.height)
-        applySizeToSurface?.invoke(windowWidth, windowHeight)
+        val newSize = IntSize(
+            getDisplayPixels(screenSize.width),
+            getDisplayPixels(screenSize.height)
+        )
+        // 尺寸未变化时跳过重复应用
+        if (newSize == lastWindowSize) return newSize
+        lastWindowSize = newSize
+
+        applySizeToSurface?.invoke(newSize.width, newSize.height)
         ZLBridgeStates.onWindowChange()
-        CallbackBridge.sendUpdateWindowSize(windowWidth, windowHeight)
+        CallbackBridge.sendUpdateWindowSize(newSize.width, newSize.height)
         if (SdlBridge.sdlEnabled) {
             SDLActivity.getSDLSurface()?.let { surface ->
                 surface.surfaceChanged()
-                surface.nativeResize(windowWidth, windowHeight)
+                surface.nativeResize(newSize.width, newSize.height)
             }
         }
 
-        return IntSize(windowWidth, windowHeight)
+        return newSize
     }
 
     override fun onDestroy() {
@@ -711,7 +741,7 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
 
     override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
         if (withHandler { mIsSurfaceDestroyed }) return
-        refreshWindowSize(screenSize = IntSize(width, height))
+        requestRefreshWindowSize(screenSize = IntSize(width, height))
     }
 
     override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
@@ -731,7 +761,10 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
         if (withHandler { mIsSurfaceDestroyed }) return
-        refreshWindowSize(screenSize = IntSize(width, height))
+        val viewWidth = gameSurfaceView?.width ?: 0
+        val viewHeight = gameSurfaceView?.height ?: 0
+        if (viewWidth <= 0 || viewHeight <= 0) return
+        requestRefreshWindowSize(screenSize = IntSize(viewWidth, viewHeight))
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
@@ -787,7 +820,7 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
                 vmViewModel.screenSize = screenSize
                 vmViewModel.screenSizeBridge.provideData(screenSize)
                 if (changed) {
-                    refreshWindowSize(screenSize = screenSize)
+                    requestRefreshWindowSize(screenSize = screenSize)
                     vmViewModel.onConfigurationChanged(false)
                 }
             }
