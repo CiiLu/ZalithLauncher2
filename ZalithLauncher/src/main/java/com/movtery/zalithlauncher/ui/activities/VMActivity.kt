@@ -369,7 +369,10 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
         PhysicalMouseChecker.initChecker(this)
 
         //启动前台服务，防止后台网络中断
-        startForegroundService(Intent(this, GameService::class.java))
+        runCatching {
+            //应用处于后台等受限状态时系统会拒绝启动，此时无需保活，忽略即可
+            startService(Intent(this, GameService::class.java))
+        }
 
         val bundle = intent.extras ?: throw IllegalStateException("Unknown VM launch state!")
 
@@ -641,10 +644,8 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
     private fun stopAllService() {
         stopService(Intent(this, GameService::class.java))
         if (TerracottaVPNService.isRunning()) {
-            val vpnIntent = Intent(this, TerracottaVPNService::class.java).apply {
-                action = TerracottaVPNService.ACTION_STOP
-            }
-            startForegroundService(vpnIntent)
+            //停止指令必须用 stopService 下发
+            stopService(Intent(this, TerracottaVPNService::class.java))
         }
     }
 
@@ -886,6 +887,7 @@ fun runGame(
     version: Version,
     account: Account,
 ) {
+    startGameService(context)
     val intent = Intent(context, VMActivity::class.java).apply {
         putExtra(INTENT_RUN_GAME, true)
         putExtra(INTENT_GAME_CONFIG, LaunchConfig(version, account))
@@ -918,9 +920,18 @@ fun runJar(
         jreName = jreName
     )
 
+    startGameService(context)
+
     val intent = Intent(context, VMActivity::class.java).apply {
         putExtra(INTENT_RUN_JAR, true)
         putExtra(INTENT_JAR_INFO, jvmLaunchInfo)
     }
     context.startActivity(intent)
+}
+
+private fun startGameService(context: Context) {
+    runCatching {
+        //应用处于后台等受限状态时系统会拒绝启动，此时无需保活，忽略即可
+        context.startService(Intent(context, GameService::class.java))
+    }
 }
