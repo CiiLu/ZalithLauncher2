@@ -72,6 +72,7 @@ import com.movtery.zalithlauncher.game.download.assets.platform.isAllNull
 import com.movtery.zalithlauncher.game.download.assets.utils.ModTranslations
 import com.movtery.zalithlauncher.game.download.assets.utils.getMcmodTitle
 import com.movtery.zalithlauncher.game.download.assets.utils.getTranslations
+import com.movtery.zalithlauncher.game.version.mod.InstalledMod
 import com.movtery.zalithlauncher.game.versioninfo.filterRelease
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
@@ -287,6 +288,7 @@ private fun rememberDownloadAssetsViewModel(
  * @param parentScreenKey 父屏幕Key
  * @param parentCurrentKey 父屏幕当前Key
  * @param currentKey 当前的Key
+ * @param installedChecker 查询版本本地是否已安装，null 则不进行已安装标注
  */
 @Composable
 fun DownloadAssetsScreen(
@@ -300,6 +302,7 @@ fun DownloadAssetsScreen(
     nestedNavKeyClass: Class<out TitledNavKey>? = null,
     versionsUIWeight: Float = 6.5f,
     projectUIWeight: Float = 3.5f,
+    installedChecker: ((PlatformVersion) -> InstalledMod?)? = null,
 ) {
     val viewModel: DownloadScreenViewModel = rememberDownloadAssetsViewModel(key)
 
@@ -320,6 +323,7 @@ fun DownloadAssetsScreen(
                     .fillMaxHeight()
                     .offset { IntOffset(x = 0, y = yOffset.roundToPx()) },
                 viewModel = viewModel,
+                installedChecker = installedChecker,
                 onReload = { viewModel.getVersions() },
                 onItemClicked = { version ->
                     val deps = version.platformDependencies().mapNotNull { dep ->
@@ -359,6 +363,7 @@ fun DownloadAssetsScreen(
 private fun Versions(
     modifier: Modifier = Modifier,
     viewModel: DownloadScreenViewModel,
+    installedChecker: ((PlatformVersion) -> InstalledMod?)? = null,
     onReload: () -> Unit = {},
     onItemClicked: (PlatformVersion) -> Unit = {}
 ) {
@@ -480,6 +485,7 @@ private fun Versions(
                                 .fillMaxWidth()
                                 .padding(vertical = 6.dp),
                             infoMap = info,
+                            installedChecker = installedChecker,
                             onItemClicked = onItemClicked
                         )
                     }

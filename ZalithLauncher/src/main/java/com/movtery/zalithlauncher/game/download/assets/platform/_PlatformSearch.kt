@@ -24,8 +24,10 @@ import com.movtery.zalithlauncher.game.addons.mirror.resolveMirrorPriority
 import com.movtery.zalithlauncher.game.download.assets.mapExceptionToMessage
 import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.CurseForgeSearcher
 import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.MCIM_CURSEFORGE_API
+import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.models.CurseForgeFile
 import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.MCIM_MODRINTH_API
 import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.ModrinthSearcher
+import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.models.ModrinthVersion
 import com.movtery.zalithlauncher.game.download.assets.utils.localizedModSearchKeywords
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.DownloadAssetsState
@@ -350,5 +352,46 @@ suspend fun getVersionByLocalFile(file: File, sha1: String): PlatformVersion? = 
             else if (!curseForgeDeferred.isCompleted) curseForgeDeferred.await()
             else null
         }
+    }
+}
+
+/** 单次批量指纹匹配的指纹数量上限，防止单次请求数据量过大 */
+private const val FINGERPRINT_BATCH_SIZE = 100
+
+/**
+ * 通过本地文件的 SHA-1 值批量获取 Modrinth 平台对应的版本
+ * @return 键为 SHA-1 值，值为匹配到的版本，未命中的指纹不在结果中
+ */
+suspend fun getModrinthVersBySha1(
+    sha1List: List<String>
+): Map<String, ModrinthVersion> = buildMap {
+    for (chunk in sha1List.chunked(FINGERPRINT_BATCH_SIZE)) {
+        putAll(
+            mirroredPlatformSearcher(
+                searchers = mirroredModrinthSource(),
+                printLog = false
+            ) { searcher ->
+                searcher.getVersionFiles(sha1List = chunk)
+            }
+        )
+    }
+}
+
+/**
+ * 通过本地文件的 CurseForge 指纹批量获取 CurseForge 平台对应的文件
+ * @return 键为文件指纹，值为匹配到的文件，未命中的指纹不在结果中
+ */
+suspend fun getCFFilesByFingerprints(
+    fingerprints: List<Long>
+): Map<Long, CurseForgeFile> = buildMap {
+    for (chunk in fingerprints.chunked(FINGERPRINT_BATCH_SIZE)) {
+        putAll(
+            mirroredPlatformSearcher(
+                searchers = mirroredCurseForgeSource(),
+                printLog = false
+            ) { searcher ->
+                searcher.getFilesByFingerprints(fingerprints = chunk)
+            }
+        )
     }
 }
