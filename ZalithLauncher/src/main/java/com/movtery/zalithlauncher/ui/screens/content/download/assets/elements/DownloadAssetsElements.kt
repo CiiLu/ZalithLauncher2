@@ -333,7 +333,7 @@ private fun AssetsVersionHeadLayout(
         }
         if (hasInstalled) {
             InstalledModBadge(
-                modifier = Modifier.padding(start = 4.dp, end = 2.dp),
+                modifier = Modifier.padding(start = 4.dp),
                 size = 16.dp
             )
         }
