@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.movtery.zalithlauncher.game.download.assets.platform.FINGERPRINT_BATCH_SIZE
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
 import com.movtery.zalithlauncher.game.download.assets.platform.getCFFilesByFingerprints
@@ -71,6 +72,9 @@ class DownloadModViewModel : ViewModel() {
 
     private var scanJob: Job? = null
 
+    /** 最近一次扫描对应的版本名称，用于判断扫描目标是否变化 */
+    private var scannedVersionName: String? = null
+
     /** 最近一次扫描得到的所有本地模组文件指纹 */
     private var scannedFingerprints: List<ModFingerprints> = emptyList()
 
@@ -96,23 +100,31 @@ class DownloadModViewModel : ViewModel() {
 
     /**
      * 扫描指定游戏版本的模组目录，并按当前平台匹配本地已安装的模组
+     *
+     * 扫描目标版本变化时立即清除旧的匹配结果；
+     * 同版本重复扫描时保留旧结果直至新结果就绪，避免标注闪烁
      */
     fun scan(version: Version?) {
         scanJob?.cancel()
-        scanJob = viewModelScope.launch {
-            matching = true
+
+        val versionName = version?.getVersionName()
+        if (versionName != scannedVersionName) {
             installedByProject = emptyMap()
             installedByVersion = emptyMap()
-            matchedResults.clear()
-            scannedFingerprints = emptyList()
+        }
+        //重扫后指纹集合可能变化，已完成的平台匹配结果全部失效
+        matchedResults.clear()
 
-            if (version != null) {
-                scannedFingerprints = runCatching {
-                    scanFingerprints(VersionFolders.MOD.getDir(version.getGameDir()))
+        scanJob = viewModelScope.launch {
+            matching = true
+            scannedVersionName = versionName
+            scannedFingerprints = version?.let { ver ->
+                runCatching {
+                    scanFingerprints(VersionFolders.MOD.getDir(ver.getGameDir()))
                 }.onFailure { e ->
                     Logger.warning(TAG, "Failed to scan local mod fingerprints", e)
                 }.getOrDefault(emptyList())
-            }
+            } ?: emptyList()
 
             applyMatches(currentPlatform)
             matching = false
@@ -150,47 +162,49 @@ class DownloadModViewModel : ViewModel() {
             return
         }
 
-        val result = withContext(Dispatchers.IO) {
-            val cache = installedModCache()
-            val byProject = mutableMapOf<String, InstalledMod>()
-            val byVersion = mutableMapOf<String, InstalledMod>()
+        val cache = installedModCache()
+        val byProject = mutableMapOf<String, InstalledMod>()
+        val byVersion = mutableMapOf<String, InstalledMod>()
+        var allSucceeded = true
 
-            fun collect(installed: InstalledMod) {
-                if (installed.notFound) return
-                byProject[installed.projectId] = installed
-                byVersion[installed.versionId] = installed
-            }
-
-            // 优先读取持久缓存，只对未命中的指纹发起批量查询
-            val uncached = mutableListOf<ModFingerprints>()
-            for (print in fingerprints) {
-                val cached = cache.decodeParcelable(print.cacheKey(platform), InstalledMod::class.java)
-                if (cached != null) collect(cached) else uncached.add(print)
-            }
-
-            if (uncached.isNotEmpty()) {
-                runCatching {
-                    when (platform) {
-                        Platform.MODRINTH -> getModrinthVersBySha1(uncached.map { it.sha1 })
-                        Platform.CURSEFORGE ->
-                            getCFFilesByFingerprints(uncached.map { it.murmur2 }).mapKeys { it.key.toString() }
-                    }
-                }.onSuccess { fetched ->
-                    for (print in uncached) {
-                        val installed = fetched[print.fingerprintValue(platform)]?.toInstalledMod()
-                            ?: notFoundMod(platform)
-                        cache.encode(print.cacheKey(platform), installed, MMKV.ExpireInDay)
-                        collect(installed)
-                    }
-                }.onFailure { e ->
-                    Logger.warning(TAG, "Failed to match installed mods on platform: $platform", e)
-                }
-            }
-
-            byProject to byVersion
+        fun collect(installed: InstalledMod) {
+            if (installed.notFound) return
+            byProject[installed.projectId] = installed
+            byVersion[installed.versionId] = installed
         }
 
-        matchedResults[platform] = result
+        // 优先读取持久缓存，只对未命中的指纹发起批量查询
+        val uncached = mutableListOf<ModFingerprints>()
+        for (print in fingerprints) {
+            val cached = cache.decodeParcelable(print.cacheKey(platform), InstalledMod::class.java)
+            if (cached != null) collect(cached) else uncached.add(print)
+        }
+
+        // 分块批量查询；块内成功时才允许写入持久缓存（含未命中的负缓存），
+        // 失败的块不写任何缓存，留待下次进入时重试
+        for (chunk in uncached.chunked(FINGERPRINT_BATCH_SIZE)) {
+            runCatching {
+                when (platform) {
+                    Platform.MODRINTH -> getModrinthVersBySha1(chunk.map { it.sha1 })
+                    Platform.CURSEFORGE ->
+                        getCFFilesByFingerprints(chunk.map { it.murmur2 }).mapKeys { it.key.toString() }
+                }
+            }.onSuccess { fetched ->
+                for (print in chunk) {
+                    val installed = fetched[print.fingerprintValue(platform)]?.toInstalledMod()
+                        ?: notFoundMod(platform)
+                    cache.encode(print.cacheKey(platform), installed, MMKV.ExpireInDay)
+                    collect(installed)
+                }
+            }.onFailure { e ->
+                allSucceeded = false
+                Logger.warning(TAG, "Failed to match installed mods on platform: $platform", e)
+            }
+        }
+
+        val result = byProject to byVersion
+        // 存在失败块时不做会话内缓存，下次切换平台时重试（成功块已有持久缓存兜底）
+        if (allSucceeded) matchedResults[platform] = result
         installedByProject = result.first
         installedByVersion = result.second
     }

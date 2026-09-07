@@ -66,8 +66,9 @@ fun DownloadModScreen(
 
     LaunchedEffect(stackTopKey) {
         onCurrentKeyChange(stackTopKey)
-        // 每次回到模组搜索页时，重新扫描当前版本已安装的模组
-        if (stackTopKey is NormalNavKey.SearchMod) {
+        // 进入模组搜索页或项目详情页时，重新扫描当前版本已安装的模组
+        // 同版本重复扫描会直接复用内存与持久缓存，且不会清除已有的标注数据
+        if (stackTopKey is NormalNavKey.SearchMod || stackTopKey is NormalNavKey.DownloadAssets) {
             installedViewModel.scan(VersionsManager.currentVersion.value)
         }
     }
