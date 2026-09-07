@@ -984,7 +984,11 @@ private fun MouseControlLayout(
             },
             isMoveOnlyPointer = isMoveOnlyPointer,
             onOccupiedPointer = onOccupiedPointer,
-            onReleasePointer = onReleasePointer
+            onReleasePointer = onReleasePointer,
+            enableScrollGesture = AllSettings.gestureControl.state,
+            onScrollGesture = { scroll ->
+                CallbackBridge.sendScroll(scroll.x.toDouble(), scroll.y.toDouble())
+            }
         )
     }
 }
