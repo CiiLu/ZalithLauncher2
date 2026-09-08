@@ -371,8 +371,7 @@ private fun AssetsVersionListItem(
             .clip(shape = MaterialTheme.shapes.medium)
             .background(
                 color = if (installed != null) {
-                    // 本地已安装的版本项整行标绿
-                    InstalledModColor.copy(alpha = 0.15f)
+                    MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f)
                 } else {
                     Color.Transparent
                 },

@@ -65,16 +65,14 @@ import com.movtery.zalithlauncher.utils.logging.Logger
 
 private const val TAG = "AssetsCommonElements"
 
-/** 本地模组已安装的标识色 */
-val InstalledModColor = Color(0xFF00AE5C)
-
 /**
  * 本地已安装标识
  */
 @Composable
 fun InstalledModBadge(
     modifier: Modifier = Modifier,
-    color: Color = InstalledModColor,
+    color: Color = MaterialTheme.colorScheme.tertiary,
+    checkColor: Color = MaterialTheme.colorScheme.onTertiary,
     size: Dp = 14.dp
 ) {
     Box(
@@ -88,7 +86,7 @@ fun InstalledModBadge(
             modifier = Modifier.size(size * 0.7f),
             painter = painterResource(R.drawable.ic_check),
             contentDescription = null,
-            tint = Color.White
+            tint = checkColor
         )
     }
 }
