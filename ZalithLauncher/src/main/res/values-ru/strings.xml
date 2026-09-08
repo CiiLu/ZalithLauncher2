@@ -378,6 +378,10 @@
     <string name="settings_game_jvm_args_summary">Дополнительные аргументы JVM, добавляемые при запуске JVM. Изменение этих параметров без должных знаний не рекомендуется, так как это может вызвать сбои</string>
     <string name="settings_game_log_text_size_title">Размер шрифта логов</string>
     <string name="settings_game_log_text_size_summary">Настроить размер текста на экране логов</string>
+    <string name="settings_game_tts_bridge_title">Диктор (синтез речи)</string>
+    <string name="settings_game_tts_bridge_summary">Озвучивает текст в игре системным голосом. Режимы диктора в игре определяются настройками специальных возможностей самой игры</string>
+    <string name="settings_game_tts_speech_rate_title">Скорость диктора</string>
+    <string name="settings_game_tts_speech_rate_summary">Настройте скорость речи системного голоса</string>
     <string name="settings_game_log_buffer_flush_interval_title">Интервал обновления буфера логов</string>
     <string name="settings_game_log_buffer_flush_interval_summary">Установить, как часто обновляется буфер логов. Слишком частое или редкое обновление может повлиять на производительность</string>
     <string name="settings_control_mouse_physical_mouse_mode_title">При подключении мыши использовать системный курсор</string>
@@ -1056,6 +1060,7 @@
     <string name="files_delete_file">Вы уверены, что хотите удалить %s?</string>
     <string name="notification_jvm_running_name">Служба поддержания активности JVM</string>
     <string name="unpack_screen_jna">Позволяет Minecraft напрямую вызывать низкоуровневые функции ОС.</string>
+    <string name="unpack_screen_tts_bridge">Компонент-мост синтеза речи, обеспечивающий озвучивание игрового текста системным голосом</string>
     <string name="download_game_version_overwrite">Перезапишет существующую версию: %s</string>
     <string name="download_game_version_overwrite_select">Версия для перезаписи</string>
     <string name="download_game_version_overwrite_select_subtitle">Выберите версию для перезаписи. Эту функцию можно использовать для обновления или отката версии</string>

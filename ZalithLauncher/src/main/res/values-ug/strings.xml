@@ -86,4 +86,9 @@
     <string name="theme_color_urban_ash">تىتان سايىسى</string>
     <string name="theme_color_verdant_dawn">تىنچ ئورماندىكى تاڭ</string>
     <string name="theme_color_picker_title">رەڭ تاللىغۇچ</string>
+    <string name="unpack_screen_tts_bridge">ئۈن سىنتىزى كۆۋرۈك زاپچىسى، ئويۇنغا سىستېما ئاۋازى ئارقىلىق ئوقۇش ئىقتىدارى ئاتا قىلىدۇ</string>
+    <string name="settings_game_tts_bridge_title">بايانچى (ئۈن سىنتىزى)</string>
+    <string name="settings_game_tts_bridge_summary">ئويۇن ئىچىدىكى تېكىستلەرنى سىستېما ئاۋازى بىلەن ئوقۇيدۇ، ئويۇن ئىچىدىكى بايان ھالىتى يەنىلا ئويۇننىڭ ئۆز ياردەمچى تەڭشەكلىرىگە ئەگىشىدۇ</string>
+    <string name="settings_game_tts_speech_rate_title">بايان سۈرئىتى</string>
+    <string name="settings_game_tts_speech_rate_summary">سىستېما ئاۋازىنىڭ ئوقۇش سۈرئىتىنى تەڭشەيدۇ</string>
 </resources>

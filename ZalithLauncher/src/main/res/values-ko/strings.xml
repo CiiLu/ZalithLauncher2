@@ -845,6 +845,10 @@
     <string name="settings_game_show_log_automatic_summary">게임이 화면을 렌더링하기 전에 자동으로 로그를 보여줍니다</string>
     <string name="settings_game_log_text_size_title">로그 폰트 크기</string>
     <string name="settings_game_log_text_size_summary">로그 화면 폰트 크기를 조정합니다</string>
+    <string name="settings_game_tts_bridge_title">내레이터 (음성 해설)</string>
+    <string name="settings_game_tts_bridge_summary">시스템 음성으로 게임 내 텍스트를 읽어줍니다. 게임 내 내레이터 모드는 게임 자체의 접근성 설정을 따릅니다</string>
+    <string name="settings_game_tts_speech_rate_title">내레이터 속도</string>
+    <string name="settings_game_tts_speech_rate_summary">시스템 음성의 읽기 속도를 조정합니다</string>
     <string name="settings_control_mouse_physical_mouse_mode_title">물리적 마우스</string>
     <string name="settings_control_mouse_hide_title">가상 마우스 숨김</string>
     <string name="settings_control_mouse_size_title">가상 마우스 크기</string>
@@ -854,6 +858,7 @@
     <string name="error_gone">(%s) 요청한 리소스는 더 이상 사용할 수 없습니다</string>
     <string name="error_internal_server_error">(%s) 서버에 예상치 못한 오류가 발생했습니다</string>
     <string name="unpack_screen_jna">Minecraft가 저수준 운영체제 함수를 직접 사용할 수 있도록 허용</string>
+    <string name="unpack_screen_tts_bridge">음성 합성 브리지 구성 요소로, 게임에 시스템 음성 해설 기능을 제공합니다</string>
     <string name="download_assets_id_tip">프로젝트 ID로 해당 프로젝트를 빠르게 검색할 수 있습니다</string>
     <string name="game_menu_option_hotbar_double_click">두 번 클릭으로 보조 손과 아이템 교체</string>
     <string name="game_menu_option_hotbar_long_click">길게 눌러 선택한 아이템 떨어트리기</string>

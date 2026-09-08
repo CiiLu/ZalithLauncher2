@@ -154,6 +154,7 @@
     <string name="unpack_screen_lwjgl">輕量級 Java 遊戲函式庫，Minecraft 依賴它執行遊戲</string>
     <string name="unpack_screen_launcher">啟動器依賴的一些元件</string>
     <string name="unpack_screen_jna">讓 Minecraft 能直接呼叫作業系統的底層功能</string>
+    <string name="unpack_screen_tts_bridge">語音合成橋接元件，為遊戲提供系統復述播報能力</string>
     <!--  主選單  -->
     <string name="main_launch_game">啟動遊戲</string>
     <string name="main_task_menu">任務選單</string>
@@ -822,6 +823,10 @@
     <string name="settings_game_show_log_automatic_summary">在遊戲尚未正式渲染畫面前，自動顯示日誌</string>
     <string name="settings_game_log_text_size_title">日誌字體大小</string>
     <string name="settings_game_log_text_size_summary">調整日誌畫面上的文字大小</string>
+    <string name="settings_game_tts_bridge_title">復述功能（語音播報）</string>
+    <string name="settings_game_tts_bridge_summary">使用系統人聲播報遊戲內給出的文字，遊戲內的復述檔位仍然跟隨遊戲自身的輔助功能設定</string>
+    <string name="settings_game_tts_speech_rate_title">復述語速</string>
+    <string name="settings_game_tts_speech_rate_summary">調整系統人聲的播報語速</string>
     <string name="settings_game_log_buffer_flush_interval_title">日誌刷新間隔</string>
     <string name="settings_game_log_buffer_flush_interval_summary">設定日誌緩衝區多久刷新一次。刷新太頻繁或太久不刷新都可能影響效能</string>
     <string name="settings_control_physical_key_bind_ime_title">實體鍵盤呼叫輸入法</string>

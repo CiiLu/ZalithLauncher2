@@ -126,6 +126,7 @@
     <string name="unpack_screen_cacio">Portable GUI backend para sa OpenJDK</string>
     <string name="unpack_screen_lwjgl">Lightweight Java Game Library (kinakailangan ng Minecraft)</string>
     <string name="unpack_screen_launcher">Mahahalagang bahagi ng launcher</string>
+    <string name="unpack_screen_tts_bridge">Bahaging tulay ng text-to-speech na nagbibigay sa laro ng kakayahang magbasa gamit ang boses ng sistema</string>
     <string name="main_launch_game">Ilunsad</string>
     <string name="download_category_game">Laro</string>
     <string name="download_game_failed_to_get_versions">Nabigong makuha ang bersyon: %s. Pindutin upang masubukan muli.</string>
@@ -246,4 +247,8 @@
     <string name="download_assets_category_decoration">Dekorasyon</string>
     <string name="download_assets_category_mobs">Mga Mob</string>
     <string name="download_assets_category_equipment">Kagamitan</string>
+    <string name="settings_game_tts_bridge_title">Narrator (Text-to-Speech)</string>
+    <string name="settings_game_tts_bridge_summary">Binabasa nang malakas ang mga teksto sa loob ng laro gamit ang boses ng sistema. Ang mga mode ng narrator sa loob ng laro ay sumusunod sa accessibility settings ng mismong laro</string>
+    <string name="settings_game_tts_speech_rate_title">Bilis ng Narrator</string>
+    <string name="settings_game_tts_speech_rate_summary">Iayos ang bilis ng pagsasalita ng boses ng sistema</string>
 </resources>

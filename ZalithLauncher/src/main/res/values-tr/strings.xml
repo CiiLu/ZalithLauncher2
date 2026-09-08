@@ -514,6 +514,10 @@
     <string name="settings_game_show_log_automatic_summary">Oyun ekranı resmi olarak işlemeden (render etmeden) önce günlükleri (logları) otomatik olarak göster</string>
     <string name="settings_game_log_text_size_title">Log Yazı Boyutu</string>
     <string name="settings_game_log_text_size_summary">Log ekranı yazı boyutunu ayarla</string>
+    <string name="settings_game_tts_bridge_title">Anlatıcı (Metin Okuma)</string>
+    <string name="settings_game_tts_bridge_summary">Oyun içi metinleri sistem sesiyle okur. Oyun içi anlatıcı modları, oyunun kendi erişilebilirlik ayarlarını takip eder</string>
+    <string name="settings_game_tts_speech_rate_title">Anlatım Hızı</string>
+    <string name="settings_game_tts_speech_rate_summary">Sistem sesinin konuşma hızını ayarlar</string>
     <string name="settings_game_log_buffer_flush_interval_title">Log Yenileme Sıklığı</string>
     <string name="settings_game_log_buffer_flush_interval_summary">Günlük tamponunun ne sıklıkla yenileneceğini ayarlar. Çok sık veya uzun süre yenilenmemesi performansı etkileyebilir</string>
     <string name="settings_control_physical_key_bind_ime_title">Klavye IME Kısayolu</string>
@@ -1151,6 +1155,7 @@
     <string name="screenshots_manage_export_all_message">Tüm ekran görüntülerini sistem galerisine aktarmak istiyormusunuz?</string>
     <string name="screenshots_manage_export_selected_message">Seçilen %1$d ekran görüntülerinü sistem galerisine dışarıya aktar?</string>
     <string name="unpack_screen_jna">Minecraft\'ın düşük seviyeli işletim sistemi fonksiyonlarını doğrudan çağırmasına olanak tanır</string>
+    <string name="unpack_screen_tts_bridge">Oyuna sistem sesli anlatım yeteneği kazandıran metin okuma köprü bileşeni</string>
     <string name="notification_jvm_running_name">JVM Sürdürme Servisi</string>
     <string name="generic_edit">Düzenle</string>
     <string name="generic_view">Görüntüle</string>

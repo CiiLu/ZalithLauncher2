@@ -569,6 +569,10 @@
     <string name="settings_game_show_log_automatic_summary">Mostra os registros do jogo antes dele ser renderizado na tela</string>
     <string name="settings_game_log_text_size_title">Tamanho da fonte do log</string>
     <string name="settings_game_log_text_size_summary">Ajusta o tamanho da fonte na tela de registro</string>
+    <string name="settings_game_tts_bridge_title">Narrador (texto para voz)</string>
+    <string name="settings_game_tts_bridge_summary">Narra o texto do jogo usando a voz do sistema. Os modos de narrador dentro do jogo seguem as configurações de acessibilidade do próprio jogo</string>
+    <string name="settings_game_tts_speech_rate_title">Velocidade de narração</string>
+    <string name="settings_game_tts_speech_rate_summary">Ajusta a velocidade de fala da voz do sistema</string>
     <string name="settings_game_log_buffer_flush_interval_title">Intervalo flush do log</string>
     <string name="settings_game_log_buffer_flush_interval_summary">Define a frequência com que o buffer do registro é atualizado. Atualizar com muita ou pouca frequência pode afetar o desempenho</string>
     <string name="settings_control_physical_key_bind_ime_summary">Aperte para vincular uma tecla para alterar o método de entrada durante a gameplay</string>
@@ -839,6 +843,7 @@
     <string name="notification_jvm_running_name">Serviço Keep-Alive da JVM</string>
     <string name="unpack_screen_jre25">Ambiente Java 25 (necessário para Minecraft 26.1+)</string>
     <string name="unpack_screen_jna">Permite que o Minecraft chame diretamente funções de baixo nível do OS</string>
+    <string name="unpack_screen_tts_bridge">Componente de ponte de texto para voz que fornece ao jogo a narração por voz do sistema</string>
     <string name="download_category_by_id">Pesquisar por ID</string>
     <string name="download_game_version_overwrite">Isso irá sobrescrever a versão existente: %s</string>
     <string name="download_game_version_overwrite_select">Versão para sobrescrever</string>

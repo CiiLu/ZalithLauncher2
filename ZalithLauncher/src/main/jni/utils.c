@@ -155,3 +155,21 @@ jintArray convertIntArrayJVM(JNIEnv* srcEnv, JNIEnv* dstEnv, jintArray srcIntArr
 
 	return dstIntArray;
 }
+
+jbyteArray convertByteArrayJVM(JNIEnv* srcEnv, JNIEnv* dstEnv, jbyteArray srcByteArray) {
+	if (srcByteArray == NULL) {
+		return NULL;
+	}
+
+	jsize len = (*srcEnv)->GetArrayLength(srcEnv, srcByteArray);
+	jbyte* srcPtr = (*srcEnv)->GetByteArrayElements(srcEnv, srcByteArray, NULL);
+
+	jbyteArray dstByteArray = (*dstEnv)->NewByteArray(dstEnv, len);
+	if (dstByteArray != NULL) {
+		(*dstEnv)->SetByteArrayRegion(dstEnv, dstByteArray, 0, len, srcPtr);
+	}
+
+	(*srcEnv)->ReleaseByteArrayElements(srcEnv, srcByteArray, srcPtr, JNI_ABORT);
+
+	return dstByteArray;
+}

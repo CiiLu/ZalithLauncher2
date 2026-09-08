@@ -111,6 +111,7 @@
     <string name="unpack_screen_cacio">Backend gráfico portátil para OpenJDK</string>
     <string name="unpack_screen_lwjgl">Lightweight Java Game Library (requerida por Minecraft)</string>
     <string name="unpack_screen_launcher">Componentes esenciales del launcher</string>
+    <string name="unpack_screen_tts_bridge">Componente puente de texto a voz que proporciona al juego la narración por voz del sistema</string>
     <string name="main_launch_game">Jugar</string>
     <string name="main_task_menu">Menú de tareas</string>
     <string name="download_category_game">Juego</string>
@@ -722,6 +723,10 @@
     <string name="settings_game_show_log_automatic_summary">Mostrar registros automáticamente antes de que el juego renderice oficialmente la pantalla</string>
     <string name="settings_game_log_text_size_title">Tamaño de fuente del registro</string>
     <string name="settings_game_log_text_size_summary">Ajustar el tamaño del texto en la pantalla de registro</string>
+    <string name="settings_game_tts_bridge_title">Narrador (texto a voz)</string>
+    <string name="settings_game_tts_bridge_summary">Narra el texto del juego con la voz del sistema. Los modos del narrador dentro del juego siguen la configuración de accesibilidad del propio juego</string>
+    <string name="settings_game_tts_speech_rate_title">Velocidad de narración</string>
+    <string name="settings_game_tts_speech_rate_summary">Ajusta la velocidad de habla de la voz del sistema</string>
     <string name="settings_game_log_buffer_flush_interval_title">Intervalo de vaciado de registro</string>
     <string name="settings_game_log_buffer_flush_interval_summary">Establecer la frecuencia con la que se actualiza el búfer de registro. Actualizar con demasiada frecuencia o con poca frecuencia puede afectar el rendimiento</string>
     <string name="settings_control_physical_key_bind_ime_title">Invocación de método de entrada de teclado físico</string>

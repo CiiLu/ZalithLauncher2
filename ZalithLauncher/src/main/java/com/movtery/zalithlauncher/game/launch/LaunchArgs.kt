@@ -168,6 +168,11 @@ class LaunchArgs(
             ?: ""
     }
 
+    private fun getTTSBridgeLibraryPath(): String? =
+        File(PathManager.DIR_COMPONENTS, "tts_bridge")
+            .listFiles { file -> file.name.endsWith(".jar") }
+            ?.minByOrNull { it.name }?.absolutePath
+
     private fun lwjglJarOrder(name: String, versionDir: String, isLwjgl2: Boolean): Int = when (name) {
         "lwjgl.jar" -> 0
         "lwjgl-$versionDir-merged-modules.jar" -> 1
@@ -321,8 +326,13 @@ class LaunchArgs(
         for (libItem in gameManifest.libraries) {
             if (!(GameManifest.Rule.checkRules(libItem.rules) && !libItem.isNative)) continue
             val path = libItem.progressLibrary() ?: continue
+            val resolvedPath = if (File(path).isAbsolute) {
+                path
+            } else {
+                getLibrariesHome() + "/" + path
+            }
             with(libSortFix) {
-                libs.insertLib(libItem, getLibrariesHome() + "/" + path)
+                libs.insertLib(libItem, resolvedPath)
             }
         }
 
@@ -334,6 +344,10 @@ class LaunchArgs(
      * @return 库相对路径
      */
     private fun GameManifest.Library.progressLibrary(): String? {
+        if (name.startsWith("com.mojang:text2speech")) {
+            getTTSBridgeLibraryPath()?.let { return it }
+        }
+
         if (filterLibrary()) return null
 
         var path = artifactToPath(this)

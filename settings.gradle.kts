@@ -26,6 +26,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "ZalithLauncher"
 include(":ZalithLauncher")
+include(":Text2SpeechBridge")
 include(":LWJGL")
 include(":LWJGL:patches")
 project(":LWJGL:patches").projectDir = file("LWJGL/patches")
