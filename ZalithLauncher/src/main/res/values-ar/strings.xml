@@ -513,8 +513,4 @@
     <string name="files_browse_folder">تصفح المجلد</string>
     <string name="files_importing">استيراد الملفات</string>
     <string name="files_delete_file">…هل أنت متأكد من رغبتك في حذف %s؟</string>
-    <string name="settings_game_tts_bridge_title">الراوي (تحويل النص إلى كلام)</string>
-    <string name="settings_game_tts_bridge_summary">يقرأ نصوص اللعبة بصوت النظام، وتظل أوضاع الراوي داخل اللعبة تتبع إعدادات إمكانية الوصول الخاصة باللعبة نفسها</string>
-    <string name="settings_game_tts_speech_rate_title">سرعة الراوي</string>
-    <string name="settings_game_tts_speech_rate_summary">يضبط سرعة حديث صوت النظام</string>
 </resources>

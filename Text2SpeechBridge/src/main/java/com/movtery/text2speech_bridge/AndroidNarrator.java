@@ -52,6 +52,16 @@ public final class AndroidNarrator implements Narrator {
     }
 
     @Override
+    public boolean active() {
+        if (!bridgeLoaded) return false;
+        try {
+            return nativeIsActive();
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    @Override
     public void say(String message) {
         say(message, false);
     }
@@ -87,11 +97,6 @@ public final class AndroidNarrator implements Narrator {
     }
 
     @Override
-    public boolean active() {
-        return bridgeLoaded;
-    }
-
-    @Override
     public void destroy() {
         if (!bridgeLoaded) return;
         try {
@@ -105,4 +110,6 @@ public final class AndroidNarrator implements Narrator {
     private static native void nativeClear();
 
     private static native void nativeDestroy();
+
+    private static native boolean nativeIsActive();
 }

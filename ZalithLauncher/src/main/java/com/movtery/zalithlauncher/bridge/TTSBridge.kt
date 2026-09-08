@@ -24,7 +24,6 @@ import android.os.Looper
 import android.speech.tts.TextToSpeech
 import androidx.annotation.Keep
 import com.movtery.zalithlauncher.context.GlobalContext
-import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.utils.logging.Logger
 import java.util.ArrayDeque
 
@@ -45,18 +44,16 @@ object TTSBridge {
     private var tts: TextToSpeech? = null
     private var initStatus: Int = STATUS_INITIALIZING
     private var engineCreationRequested: Boolean = false
+    private var generation: Int = 0
     private var candidateEngines: List<String> = emptyList()
     private var requestedEngine: String? = null
     private val triedEngines = mutableSetOf<String>()
     private val pending = ArrayDeque<PendingSpeech>()
-    private var lastRate: Float = Float.MIN_VALUE
     private var speakCount: Int = 0
 
     @Keep
     @JvmStatic
     fun speak(message: ByteArray, interrupt: Boolean, volume: Float) {
-        if (!AllSettings.ttsBridgeEnabled.getValue()) return
-
         val text = runCatching { String(message, Charsets.UTF_8) }.getOrNull() ?: return
         if (text.isBlank()) return
 
@@ -71,6 +68,17 @@ object TTSBridge {
                 }
                 else -> Unit
             }
+        }
+    }
+
+    @Keep
+    @JvmStatic
+    fun isReady(): Boolean {
+        synchronized(lock) {
+            ensureEngine()
+            //引擎初始化期间乐观报告可用，避免游戏在启动阶段因未就绪而将复述判定为不可用；
+            //初始化明确失败后返回不可用，由游戏自身呈现复述不可用状态
+            return initStatus != TextToSpeech.ERROR
         }
     }
 
@@ -95,21 +103,23 @@ object TTSBridge {
             tts = null
             initStatus = STATUS_INITIALIZING
             engineCreationRequested = false
+            generation++
             candidateEngines = emptyList()
             requestedEngine = null
             triedEngines.clear()
-            lastRate = Float.MIN_VALUE
         }
     }
 
     private fun ensureEngine() {
         if (engineCreationRequested) return
         engineCreationRequested = true
+        generation++
         Logger.info(TAG, "Requesting system text-to-speech engine")
 
+        val gen = generation
         mainHandler.post {
             val instance = runCatching {
-                TextToSpeech(GlobalContext.applicationContext) { status -> handleEngineInit(status) }
+                TextToSpeech(GlobalContext.applicationContext) { status -> handleEngineInit(gen, status) }
             }.getOrNull()
 
             synchronized(lock) {
@@ -126,11 +136,14 @@ object TTSBridge {
         }
     }
 
-    private fun handleEngineInit(status: Int) {
+    private fun handleEngineInit(gen: Int, status: Int) {
+        //回调所属引擎已被更换或丢弃时直接忽略
+        if (gen != generation) return
+
         val notRegistered = synchronized(lock) { tts == null }
         if (notRegistered) {
             //初始化回调可能抢在创建代码块登记实例之前到达，推迟到主线程队列尾保证引擎列表已就绪
-            mainHandler.post { handleEngineInit(status) }
+            mainHandler.post { handleEngineInit(gen, status) }
             return
         }
 
@@ -168,12 +181,14 @@ object TTSBridge {
 
     private fun recreateWithEngine(engine: String) {
         Logger.info(TAG, "Retrying text-to-speech with engine: $engine")
+        generation++
+        val gen = generation
         val failed = tts
         mainHandler.post {
             failed?.runCatching { shutdown() }
 
             val instance = runCatching {
-                TextToSpeech(GlobalContext.applicationContext, { status -> handleEngineInit(status) }, engine)
+                TextToSpeech(GlobalContext.applicationContext, { status -> handleEngineInit(gen, status) }, engine)
             }.getOrNull()
 
             synchronized(lock) {
@@ -196,12 +211,6 @@ object TTSBridge {
 
     private fun speakNow(item: PendingSpeech) {
         val engine = tts ?: return
-
-        val rate = AllSettings.ttsSpeechRate.getValue() / 100.0F
-        if (rate != lastRate) {
-            engine.setSpeechRate(rate)
-            lastRate = rate
-        }
 
         val params = Bundle().apply {
             putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, item.volume.coerceIn(0.0F, 1.0F))

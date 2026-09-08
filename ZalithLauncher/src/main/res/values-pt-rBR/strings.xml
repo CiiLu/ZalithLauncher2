@@ -757,10 +757,6 @@
     <string name="settings_game_show_log_automatic_summary">Exibir automaticamente os logs antes que o jogo renderize oficialmente a tela</string>
     <string name="settings_game_log_text_size_title">Tamanho da fonte do LOG</string>
     <string name="settings_game_log_text_size_summary">Ajustar o tamanho do texto na tela do Log</string>
-    <string name="settings_game_tts_bridge_title">Narrador (síntese de voz)</string>
-    <string name="settings_game_tts_bridge_summary">Narra o texto do jogo usando a voz do sistema. Os modos de narrador dentro do jogo seguem as configurações de acessibilidade do próprio jogo</string>
-    <string name="settings_game_tts_speech_rate_title">Velocidade de narração</string>
-    <string name="settings_game_tts_speech_rate_summary">Ajusta a velocidade de fala da voz do sistema</string>
     <string name="settings_game_log_buffer_flush_interval_title">Intervalo para a varredura dos logs</string>
     <string name="settings_game_log_buffer_flush_interval_summary">Defina a frequência com que o buffer de log é atualizado. Atualizar com muita frequência ou com pouca frequência pode afetar o desempenho</string>
     <string name="settings_control_physical_key_bind_ime_title">Atalho IME do teclado</string>

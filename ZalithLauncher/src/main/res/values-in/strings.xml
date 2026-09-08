@@ -597,10 +597,6 @@
     <string name="settings_game_show_log_automatic_summary">Tampilkan log secara otomatis sebelum logo Mojang muncul</string>
     <string name="settings_game_log_text_size_title">Ukuran Font Log</string>
     <string name="settings_game_log_text_size_summary">Sesuaikan ukuran font pada layar log</string>
-    <string name="settings_game_tts_bridge_title">Narator (Text-to-Speech)</string>
-    <string name="settings_game_tts_bridge_summary">Membacakan teks dalam game menggunakan suara sistem. Mode narator dalam game tetap mengikuti pengaturan aksesibilitas game itu sendiri</string>
-    <string name="settings_game_tts_speech_rate_title">Kecepatan Narator</string>
-    <string name="settings_game_tts_speech_rate_summary">Sesuaikan kecepatan bicara suara sistem</string>
     <string name="settings_game_log_buffer_flush_interval_title">Interval Pembaruan Log</string>
     <string name="settings_game_log_buffer_flush_interval_summary">Atur seberapa sering buffer log diperbarui. Pembaruan yang terlalu sering atau terlalu jarang dapat memengaruhi performa</string>
     <string name="settings_control_mouse_pointer_reset_message">Reset gambar kursor mouse virtual ke bawaan?</string>

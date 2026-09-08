@@ -541,10 +541,6 @@
     <string name="settings_game_show_log_automatic_summary">Tự hiện log trước khi game vẽ màn hình</string>
     <string name="settings_game_log_text_size_title">Cỡ chữ log</string>
     <string name="settings_game_log_text_size_summary">Chỉnh cỡ chữ trong màn hình log</string>
-    <string name="settings_game_tts_bridge_title">Tường thuật (đọc bằng giọng nói)</string>
-    <string name="settings_game_tts_bridge_summary">Đọc to văn bản trong trò chơi bằng giọng nói của hệ thống. Chế độ tường thuật trong game vẫn tuân theo cài đặt trợ năng của chính trò chơi</string>
-    <string name="settings_game_tts_speech_rate_title">Tốc độ tường thuật</string>
-    <string name="settings_game_tts_speech_rate_summary">Điều chỉnh tốc độ đọc của giọng nói hệ thống</string>
     <string name="settings_game_log_buffer_flush_interval_title">Khoảng flush log</string>
     <string name="settings_game_log_buffer_flush_interval_summary">Tần suất flush log, quá thường hoặc quá lâu đều ảnh hưởng hiệu năng.</string>
     <string name="settings_control_mouse_physical_mouse_mode_title">Chuột vật lý</string>

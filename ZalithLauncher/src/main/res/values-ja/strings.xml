@@ -808,10 +808,6 @@
     <string name="settings_game_show_log_automatic_title">自動でログを表示</string>
     <string name="settings_game_show_log_automatic_summary">ゲームが画面を正式に描画する前にログを自動で表示します</string>
     <string name="settings_game_log_text_size_summary">ログ画面の文字サイズを調整</string>
-    <string name="settings_game_tts_bridge_title">ナレーター（音声読み上げ）</string>
-    <string name="settings_game_tts_bridge_summary">システムの音声でゲーム内のテキストを読み上げます。ゲーム内のナレーターのモードは、ゲーム自身のユーザー補助設定に従います</string>
-    <string name="settings_game_tts_speech_rate_title">読み上げ速度</string>
-    <string name="settings_game_tts_speech_rate_summary">システム音声の読み上げ速度を調整します</string>
     <string name="settings_game_log_buffer_flush_interval_title">ログの更新間隔</string>
     <string name="settings_game_log_buffer_flush_interval_summary">ログバッファの更新頻度を設定します。更新頻度が高すぎたり低すぎたりするとパフォーマンスに影響する可能性があります</string>
     <string name="settings_control_mouse_physical_mouse_mode_summary">物理マウスが接続されていたら、仮想マウスポインターを無効にしてシステムマウスポインターでコントロールします</string>

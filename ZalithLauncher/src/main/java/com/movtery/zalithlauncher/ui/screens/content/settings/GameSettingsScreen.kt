@@ -281,34 +281,6 @@ fun GameSettingsScreen(
                     )
                 }
             }
-
-            AnimatedItem(scope) { yOffset ->
-                SettingsCardColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
-                ) {
-                    SwitchSettingsCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Top,
-                        unit = AllSettings.ttsBridgeEnabled,
-                        title = stringResource(R.string.settings_game_tts_bridge_title),
-                        summary = stringResource(R.string.settings_game_tts_bridge_summary)
-                    )
-
-                    IntSliderSettingsCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Bottom,
-                        unit = AllSettings.ttsSpeechRate,
-                        title = stringResource(R.string.settings_game_tts_speech_rate_title),
-                        summary = stringResource(R.string.settings_game_tts_speech_rate_summary),
-                        valueRange = AllSettings.ttsSpeechRate.floatRange,
-                        steps = 15,
-                        suffix = "%",
-                        enabled = AllSettings.ttsBridgeEnabled.state
-                    )
-                }
-            }
         }
     }
 }

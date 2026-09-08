@@ -247,8 +247,4 @@
     <string name="download_assets_category_decoration">Dekorasyon</string>
     <string name="download_assets_category_mobs">Mga Mob</string>
     <string name="download_assets_category_equipment">Kagamitan</string>
-    <string name="settings_game_tts_bridge_title">Narrator (Text-to-Speech)</string>
-    <string name="settings_game_tts_bridge_summary">Binabasa nang malakas ang mga teksto sa loob ng laro gamit ang boses ng sistema. Ang mga mode ng narrator sa loob ng laro ay sumusunod sa accessibility settings ng mismong laro</string>
-    <string name="settings_game_tts_speech_rate_title">Bilis ng Narrator</string>
-    <string name="settings_game_tts_speech_rate_summary">Iayos ang bilis ng pagsasalita ng boses ng sistema</string>
 </resources>

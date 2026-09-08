@@ -25,7 +25,24 @@ public interface Narrator {
 
     void destroy();
 
-    Narrator EMPTY = AndroidNarrator.getInstance();
+    Narrator EMPTY = new Narrator() {
+        @Override
+        public void say(String msg, boolean interrupt, float volume) {
+        }
+
+        @Override
+        public void clear() {
+        }
+
+        @Override
+        public boolean active() {
+            return false;
+        }
+
+        @Override
+        public void destroy() {
+        }
+    };
 
     static Narrator getNarrator() {
         return AndroidNarrator.getInstance();

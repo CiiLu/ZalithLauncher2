@@ -152,16 +152,6 @@ object AllSettings : SettingsRegistry() {
      */
     val logBufferFlushInterval = intSetting("logBufferFlushInterval", 200, 100..1000)
 
-    /**
-     * 复述功能：经系统语音合成播报游戏内文本
-     */
-    val ttsBridgeEnabled = boolSetting("ttsBridgeEnabled", true)
-
-    /**
-     * 复述功能：语音播报语速（百分比）
-     */
-    val ttsSpeechRate = intSetting("ttsSpeechRate", 100, 50..200)
-
     //Control
     /**
      * 实体鼠标控制

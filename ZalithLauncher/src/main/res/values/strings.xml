@@ -912,10 +912,6 @@
     <string name="settings_game_show_log_automatic_summary">Automatically show logs before the game officially renders the screen</string>
     <string name="settings_game_log_text_size_title">Log Font Size</string>
     <string name="settings_game_log_text_size_summary">Adjust the text size on the log screen</string>
-    <string name="settings_game_tts_bridge_title">Narrator (Text-to-Speech)</string>
-    <string name="settings_game_tts_bridge_summary">Narrate in-game text using the system voice. In-game narrator modes still follow the accessibility settings of the game itself</string>
-    <string name="settings_game_tts_speech_rate_title">Narrator Speech Rate</string>
-    <string name="settings_game_tts_speech_rate_summary">Adjust the speaking rate of the system voice</string>
     <string name="settings_game_log_buffer_flush_interval_title">Log Flush Interval</string>
     <string name="settings_game_log_buffer_flush_interval_summary">Set how often the log buffer refreshes. Refreshing too frequently or too infrequently may affect performance</string>
     <string name="settings_control_physical_key_bind_ime_title">Keyboard IME Shortcut</string>

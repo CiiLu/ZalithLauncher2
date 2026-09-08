@@ -90,6 +90,18 @@ JNIEXPORT void JNICALL Java_com_movtery_text2speech_1bridge_AndroidNarrator_nati
     }
 }
 
+JNIEXPORT jboolean JNICALL Java_com_movtery_text2speech_1bridge_AndroidNarrator_nativeIsActive(JNIEnv* env, __attribute__((unused)) jclass clazz) {
+    if (pojav_environ->method_ttsReady == NULL) return JNI_FALSE;
+    TRY_ATTACH_ENV(dvm_env, pojav_environ->dalvikJavaVMPtr, "nativeIsActive failed!\n", return JNI_FALSE;);
+    jboolean result = (*dvm_env)->CallStaticBooleanMethod(dvm_env, pojav_environ->ttsBridgeClazz, pojav_environ->method_ttsReady);
+    if ((*dvm_env)->ExceptionCheck(dvm_env)) {
+        (*dvm_env)->ExceptionDescribe(dvm_env);
+        (*dvm_env)->ExceptionClear(dvm_env);
+        return JNI_FALSE;
+    }
+    return result;
+}
+
 jint JNI_OnLoad(JavaVM* vm, __attribute__((unused)) void* reserved) {
     if (pojav_environ->dalvikJavaVMPtr == NULL) {
         LOG_TO_I("<%s> %s", "Native", "Saving DVM environ...");
@@ -110,6 +122,7 @@ jint JNI_OnLoad(JavaVM* vm, __attribute__((unused)) void* reserved) {
             pojav_environ->method_ttsSpeak = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->ttsBridgeClazz, "speak", "([BZF)V");
             pojav_environ->method_ttsStop = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->ttsBridgeClazz, "stop", "()V");
             pojav_environ->method_ttsDestroy = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->ttsBridgeClazz, "shutdown", "()V");
+            pojav_environ->method_ttsReady = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->ttsBridgeClazz, "isReady", "()Z");
             if ((*pojav_environ->dalvikJNIEnvPtr_ANDROID)->ExceptionCheck(pojav_environ->dalvikJNIEnvPtr_ANDROID)) {
                 (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->ExceptionClear(pojav_environ->dalvikJNIEnvPtr_ANDROID);
             }
