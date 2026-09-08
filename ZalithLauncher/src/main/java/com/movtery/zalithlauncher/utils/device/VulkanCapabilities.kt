@@ -90,6 +90,15 @@ object VulkanChecker {
                         TAG,
                         "Minecraft ${profile.versionRangeText} Vulkan supported: ${profile.supported}"
                     )
+                    if (!profile.supported) {
+                        val support = caps.supportFor(profile.since)
+                        val missing = (support.missingRequired + support.missingOptional)
+                            .joinToString { it.dependency.name }
+                        Logger.warning(
+                            TAG,
+                            "Minecraft ${profile.versionRangeText} missing: $missing"
+                        )
+                    }
                 }
             }
         } catch (e: UnsatisfiedLinkError) {
