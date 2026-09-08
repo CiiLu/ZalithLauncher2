@@ -278,6 +278,7 @@ Java_com_movtery_zalithlauncher_utils_device_VulkanChecker_nativeCheckVulkan(
 
     VkBool32 multiDrawIndirect                = VK_FALSE;
     VkBool32 fillModeNonSolid                 = VK_FALSE;
+    VkBool32 drawIndirectFirstInstance        = VK_FALSE;
     VkBool32 samplerAnisotropy                = VK_FALSE;
     VkBool32 shaderDrawParameters             = VK_FALSE;
     VkBool32 timelineSemaphore                = VK_FALSE;
@@ -319,6 +320,7 @@ Java_com_movtery_zalithlauncher_utils_device_VulkanChecker_nativeCheckVulkan(
 
         multiDrawIndirect     = feat2.features.multiDrawIndirect;
         fillModeNonSolid      = feat2.features.fillModeNonSolid;
+        drawIndirectFirstInstance = feat2.features.drawIndirectFirstInstance;
         samplerAnisotropy     = feat2.features.samplerAnisotropy;
         shaderDrawParameters  = featShaderDraw.shaderDrawParameters;
         timelineSemaphore     = featTimeline.timelineSemaphore;
@@ -334,6 +336,7 @@ Java_com_movtery_zalithlauncher_utils_device_VulkanChecker_nativeCheckVulkan(
         pvkGetPhysicalDeviceFeatures(physicalDevice, &feat);
         multiDrawIndirect  = feat.multiDrawIndirect;
         fillModeNonSolid   = feat.fillModeNonSolid;
+        drawIndirectFirstInstance = feat.drawIndirectFirstInstance;
         samplerAnisotropy  = feat.samplerAnisotropy;
         LOG_W("vkGetPhysicalDeviceFeatures2 unavailable; only basic features queried.");
     } else {
@@ -350,6 +353,7 @@ Java_com_movtery_zalithlauncher_utils_device_VulkanChecker_nativeCheckVulkan(
 
     PUT_FEAT("multiDrawIndirect",                multiDrawIndirect);
     PUT_FEAT("fillModeNonSolid",                 fillModeNonSolid);
+    PUT_FEAT("drawIndirectFirstInstance",        drawIndirectFirstInstance);
     PUT_FEAT("samplerAnisotropy",                samplerAnisotropy);
     PUT_FEAT("shaderDrawParameters",             shaderDrawParameters);
     PUT_FEAT("timelineSemaphore",                timelineSemaphore);
