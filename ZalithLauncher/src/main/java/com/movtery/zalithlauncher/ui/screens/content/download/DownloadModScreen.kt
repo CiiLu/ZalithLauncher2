@@ -28,12 +28,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.movtery.zalithlauncher.game.download.assets.downloadSingleForVersions
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
+import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
@@ -59,8 +61,16 @@ fun DownloadModScreen(
 ) {
     val backStack = key.backStack
     val stackTopKey = backStack.lastOrNull()
+    val installedViewModel: DownloadModViewModel =
+        viewModel(key = "download_mod_installed")
+
     LaunchedEffect(stackTopKey) {
         onCurrentKeyChange(stackTopKey)
+        // 进入模组搜索页或项目详情页时，重新扫描当前版本已安装的模组
+        // 同版本重复扫描会直接复用内存与持久缓存，且不会清除已有的标注数据
+        if (stackTopKey is NormalNavKey.SearchMod || stackTopKey is NormalNavKey.DownloadAssets) {
+            installedViewModel.scan(VersionsManager.currentVersion.value)
+        }
     }
 
     val context = LocalContext.current
@@ -104,7 +114,11 @@ fun DownloadModScreen(
                         mainScreenKey = mainScreenKey,
                         downloadScreenKey = downloadScreenKey,
                         downloadModScreenKey = key,
-                        downloadModScreenCurrentKey = downloadModScreenKey
+                        downloadModScreenCurrentKey = downloadModScreenKey,
+                        onPlatformChange = {
+                            installedViewModel.onPlatformChanged(it)
+                        },
+                        installedInfo = installedViewModel::checkProject
                     ) { platform, projectId, _ ->
                         backStack.navigateTo(
                             NormalNavKey.DownloadAssets(platform, projectId, PlatformClasses.MOD)
@@ -119,6 +133,7 @@ fun DownloadModScreen(
                         currentKey = downloadModScreenKey,
                         key = assetsKey,
                         eventViewModel = eventViewModel,
+                        installedChecker = installedViewModel::checkVersion,
                         onItemClicked = { classes, version, _, deps ->
                             operation = if (isUsingMobileData(context)) {
                                 DownloadSingleOperation.WarningForMobileData(classes, version, deps)
