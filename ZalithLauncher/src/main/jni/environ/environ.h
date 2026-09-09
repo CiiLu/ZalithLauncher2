@@ -55,12 +55,7 @@ struct pojav_environ_s {
     jmethodID method_internalWindowSizeChanged;
     jmethodID method_internalChangeMonitorSize;
     jmethodID method_notifyLauncher;
-    jmethodID method_ttsSpeak;
-    jmethodID method_ttsStop;
-    jmethodID method_ttsDestroy;
-    jmethodID method_ttsReady;
     jclass bridgeClazz;
-    jclass ttsBridgeClazz;
     jclass vmGlfwClass;
     jboolean isGrabbing;
     GLFWgamepadstate gamepadState;

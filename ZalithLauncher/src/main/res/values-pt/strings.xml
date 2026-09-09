@@ -839,7 +839,6 @@
     <string name="notification_jvm_running_name">Serviço Keep-Alive da JVM</string>
     <string name="unpack_screen_jre25">Ambiente Java 25 (necessário para Minecraft 26.1+)</string>
     <string name="unpack_screen_jna">Permite que o Minecraft chame diretamente funções de baixo nível do OS</string>
-    <string name="unpack_screen_tts_bridge">Componente de ponte de texto para voz que fornece ao jogo a narração por voz do sistema</string>
     <string name="download_category_by_id">Pesquisar por ID</string>
     <string name="download_game_version_overwrite">Isso irá sobrescrever a versão existente: %s</string>
     <string name="download_game_version_overwrite_select">Versão para sobrescrever</string>

@@ -45,63 +45,6 @@ JNIEXPORT jboolean JNICALL Java_org_lwjgl_glfw_CallbackBridge_nativeNotifyLaunch
     return result;
 }
 
-JNIEXPORT void JNICALL Java_com_movtery_text2speech_1bridge_AndroidNarrator_nativeSpeak(JNIEnv* env, __attribute__((unused)) jclass clazz, jbyteArray message, jboolean interrupt, jfloat volume) {
-    if (message == NULL) return;
-    if (pojav_environ->method_ttsSpeak == NULL) {
-        static atomic_bool tts_method_warned = false;
-        if (!atomic_exchange(&tts_method_warned, true)) {
-            LOG_TO_I("<TTS bridge> ART-side TTSBridge method was not cached, speech requests will be dropped");
-        }
-        return;
-    }
-    TRY_ATTACH_ENV(dvm_env, pojav_environ->dalvikJavaVMPtr, "nativeSpeak failed!\n", return;);
-    jbyteArray dvmMessage = convertByteArrayJVM(env, dvm_env, message);
-    if (dvmMessage != NULL) {
-        (*dvm_env)->CallStaticVoidMethod(dvm_env, pojav_environ->ttsBridgeClazz, pojav_environ->method_ttsSpeak, dvmMessage, interrupt, volume);
-        (*dvm_env)->DeleteLocalRef(dvm_env, dvmMessage);
-        static atomic_bool tts_relay_logged = false;
-        if (!atomic_exchange(&tts_relay_logged, true)) {
-            LOG_TO_I("<TTS bridge> First speech request relayed to the Android side");
-        }
-    }
-    if ((*dvm_env)->ExceptionCheck(dvm_env)) {
-        (*dvm_env)->ExceptionDescribe(dvm_env);
-        (*dvm_env)->ExceptionClear(dvm_env);
-    }
-}
-
-JNIEXPORT void JNICALL Java_com_movtery_text2speech_1bridge_AndroidNarrator_nativeClear(JNIEnv* env, __attribute__((unused)) jclass clazz) {
-    if (pojav_environ->method_ttsStop == NULL) return;
-    TRY_ATTACH_ENV(dvm_env, pojav_environ->dalvikJavaVMPtr, "nativeClear failed!\n", return;);
-    (*dvm_env)->CallStaticVoidMethod(dvm_env, pojav_environ->ttsBridgeClazz, pojav_environ->method_ttsStop);
-    if ((*dvm_env)->ExceptionCheck(dvm_env)) {
-        (*dvm_env)->ExceptionDescribe(dvm_env);
-        (*dvm_env)->ExceptionClear(dvm_env);
-    }
-}
-
-JNIEXPORT void JNICALL Java_com_movtery_text2speech_1bridge_AndroidNarrator_nativeDestroy(JNIEnv* env, __attribute__((unused)) jclass clazz) {
-    if (pojav_environ->method_ttsDestroy == NULL) return;
-    TRY_ATTACH_ENV(dvm_env, pojav_environ->dalvikJavaVMPtr, "nativeDestroy failed!\n", return;);
-    (*dvm_env)->CallStaticVoidMethod(dvm_env, pojav_environ->ttsBridgeClazz, pojav_environ->method_ttsDestroy);
-    if ((*dvm_env)->ExceptionCheck(dvm_env)) {
-        (*dvm_env)->ExceptionDescribe(dvm_env);
-        (*dvm_env)->ExceptionClear(dvm_env);
-    }
-}
-
-JNIEXPORT jboolean JNICALL Java_com_movtery_text2speech_1bridge_AndroidNarrator_nativeIsActive(JNIEnv* env, __attribute__((unused)) jclass clazz) {
-    if (pojav_environ->method_ttsReady == NULL) return JNI_FALSE;
-    TRY_ATTACH_ENV(dvm_env, pojav_environ->dalvikJavaVMPtr, "nativeIsActive failed!\n", return JNI_FALSE;);
-    jboolean result = (*dvm_env)->CallStaticBooleanMethod(dvm_env, pojav_environ->ttsBridgeClazz, pojav_environ->method_ttsReady);
-    if ((*dvm_env)->ExceptionCheck(dvm_env)) {
-        (*dvm_env)->ExceptionDescribe(dvm_env);
-        (*dvm_env)->ExceptionClear(dvm_env);
-        return JNI_FALSE;
-    }
-    return result;
-}
-
 jint JNI_OnLoad(JavaVM* vm, __attribute__((unused)) void* reserved) {
     if (pojav_environ->dalvikJavaVMPtr == NULL) {
         LOG_TO_I("<%s> %s", "Native", "Saving DVM environ...");
@@ -115,20 +58,6 @@ jint JNI_OnLoad(JavaVM* vm, __attribute__((unused)) void* reserved) {
         pojav_environ->method_onGraphicOutput = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->bridgeClazz, "onGraphicOutput", "()V");
         pojav_environ->method_onDirectInputEnable = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->bridgeClazz, "onDirectInputEnable", "()V");
         pojav_environ->method_notifyLauncher = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->bridgeClazz, "notifyLauncher", "(I[I)Z");
-        // TTS 桥接成员允许缺失：类或方法不存在时保持 NULL，播报请求将被静默忽略
-        pojav_environ->ttsBridgeClazz = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->NewGlobalRef(pojav_environ->dalvikJNIEnvPtr_ANDROID,
-            (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->FindClass(pojav_environ->dalvikJNIEnvPtr_ANDROID, "com/movtery/zalithlauncher/bridge/TTSBridge"));
-        if (pojav_environ->ttsBridgeClazz != NULL) {
-            pojav_environ->method_ttsSpeak = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->ttsBridgeClazz, "speak", "([BZF)V");
-            pojav_environ->method_ttsStop = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->ttsBridgeClazz, "stop", "()V");
-            pojav_environ->method_ttsDestroy = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->ttsBridgeClazz, "shutdown", "()V");
-            pojav_environ->method_ttsReady = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->ttsBridgeClazz, "isReady", "()Z");
-            if ((*pojav_environ->dalvikJNIEnvPtr_ANDROID)->ExceptionCheck(pojav_environ->dalvikJNIEnvPtr_ANDROID)) {
-                (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->ExceptionClear(pojav_environ->dalvikJNIEnvPtr_ANDROID);
-            }
-        } else {
-            (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->ExceptionClear(pojav_environ->dalvikJNIEnvPtr_ANDROID);
-        }
         pojav_environ->isUseStackQueueCall = JNI_FALSE;
     } else if (pojav_environ->dalvikJavaVMPtr != vm) {
         LOG_TO_I("<%s> %s", "Native", "Saving JVM environ...");

@@ -111,7 +111,6 @@
     <string name="unpack_screen_cacio">Backend gráfico portátil para OpenJDK</string>
     <string name="unpack_screen_lwjgl">Lightweight Java Game Library (requerida por Minecraft)</string>
     <string name="unpack_screen_launcher">Componentes esenciales del launcher</string>
-    <string name="unpack_screen_tts_bridge">Componente puente de texto a voz que proporciona al juego la narración por voz del sistema</string>
     <string name="main_launch_game">Jugar</string>
     <string name="main_task_menu">Menú de tareas</string>
     <string name="download_category_game">Juego</string>

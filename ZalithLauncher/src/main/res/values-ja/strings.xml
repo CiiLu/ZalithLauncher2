@@ -1106,7 +1106,6 @@
     <string name="versions_install_loader">ローダーのインストール</string>
     <string name="notification_jvm_running_name">JVM キープアライブサービス</string>
     <string name="unpack_screen_jna">Minecraft が低レベルの OS 関数を直接呼び出せるようにします。</string>
-    <string name="unpack_screen_tts_bridge">音声合成ブリッジコンポーネント。ゲームにシステム音声による復述読み上げ機能を提供します</string>
     <string name="download_game_version_overwrite">既存バージョンを上書きしてインストールします: %s</string>
     <string name="download_game_version_overwrite_select">上書きするバージョン</string>
     <string name="download_game_version_overwrite_select_subtitle">対象のバージョンを選択してください。この機能で、対象のバージョンをアップグレード/ダウングレードできます</string>

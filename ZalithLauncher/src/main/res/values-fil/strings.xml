@@ -126,7 +126,6 @@
     <string name="unpack_screen_cacio">Portable GUI backend para sa OpenJDK</string>
     <string name="unpack_screen_lwjgl">Lightweight Java Game Library (kinakailangan ng Minecraft)</string>
     <string name="unpack_screen_launcher">Mahahalagang bahagi ng launcher</string>
-    <string name="unpack_screen_tts_bridge">Bahaging tulay ng text-to-speech na nagbibigay sa laro ng kakayahang magbasa gamit ang boses ng sistema</string>
     <string name="main_launch_game">Ilunsad</string>
     <string name="download_category_game">Laro</string>
     <string name="download_game_failed_to_get_versions">Nabigong makuha ang bersyon: %s. Pindutin upang masubukan muli.</string>

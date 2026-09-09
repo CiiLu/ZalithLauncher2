@@ -41,7 +41,6 @@ jobjectArray convert_from_char_array(JNIEnv *env, char **charArray, int num_rows
 void free_char_array(JNIEnv *env, jobjectArray jstringArray, const char **charArray);
 jstring convertStringJVM(JNIEnv* srcEnv, JNIEnv* dstEnv, jstring srcStr);
 jintArray convertIntArrayJVM(JNIEnv* srcEnv, JNIEnv* dstEnv, jintArray srcIntArray);
-jbyteArray convertByteArrayJVM(JNIEnv* srcEnv, JNIEnv* dstEnv, jbyteArray srcByteArray);
 
 JNIEnv* get_attached_env(JavaVM* jvm);
 

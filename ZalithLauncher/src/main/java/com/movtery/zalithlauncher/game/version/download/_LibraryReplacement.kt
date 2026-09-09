@@ -79,7 +79,6 @@ fun GameManifest.Library.filterLibrary(): Boolean {
         name?.contains("org.lwjgl") == true -> true
         name?.contains("jinput-platform") == true -> true
         name?.contains("twitch-platform") == true -> true
-        name?.startsWith("com.mojang:text2speech") == true -> true
         else -> false
     }
 }

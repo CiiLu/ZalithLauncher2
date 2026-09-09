@@ -854,7 +854,6 @@
     <string name="error_gone">(%s) 요청한 리소스는 더 이상 사용할 수 없습니다</string>
     <string name="error_internal_server_error">(%s) 서버에 예상치 못한 오류가 발생했습니다</string>
     <string name="unpack_screen_jna">Minecraft가 저수준 운영체제 함수를 직접 사용할 수 있도록 허용</string>
-    <string name="unpack_screen_tts_bridge">음성 합성 브리지 구성 요소로, 게임에 시스템 음성 해설 기능을 제공합니다</string>
     <string name="download_assets_id_tip">프로젝트 ID로 해당 프로젝트를 빠르게 검색할 수 있습니다</string>
     <string name="game_menu_option_hotbar_double_click">두 번 클릭으로 보조 손과 아이템 교체</string>
     <string name="game_menu_option_hotbar_long_click">길게 눌러 선택한 아이템 떨어트리기</string>

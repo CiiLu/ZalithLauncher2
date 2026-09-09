@@ -46,10 +46,6 @@ enum class Components(
         "lwjgl/3.4.1", "LWJGL 3.4.1", R.string.unpack_screen_lwjgl,
         assetsDir = "app_runtime/lwjgl/3.4.1"
     ),
-    TTS_BRIDGE(
-        "tts_bridge", "Text2Speech Bridge", R.string.unpack_screen_tts_bridge,
-        assetsDir = "app_runtime/tts_bridge"
-    ),
     LAUNCHER(
         "launcher", "Launcher Components", R.string.unpack_screen_launcher,
         assetsDir = "components/launcher"

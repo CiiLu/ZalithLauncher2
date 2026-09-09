@@ -235,7 +235,6 @@
     <string name="unpack_screen_cacio">GUI Backend แบบพกพาสำหรับ OpenJDK</string>
     <string name="unpack_screen_lwjgl">ไลบรารีเกม Java แบบน้ำหนักเบา (จำเป็นสำหรับ Minecraft)</string>
     <string name="unpack_screen_launcher">ส่วนประกอบที่จำเป็นของรันเชอร์</string>
-    <string name="unpack_screen_tts_bridge">คอมโพเนนต์สะพานการสังเคราะห์เสียง ที่ช่วยให้เกมสามารถบรรยายด้วยเสียงของระบบได้</string>
     <string name="main_launch_game">เริ่มเกม</string>
     <string name="main_task_menu">เมนูภาระกิจ</string>
     <string name="download_category_game">เกม</string>
