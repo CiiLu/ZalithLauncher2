@@ -431,12 +431,18 @@
     <string name="game_vulkan_check_text">检查您的设备是否支持使用 Vulkan 运行 Minecraft 26.2+，结果仅供参考。</string>
     <string name="game_vulkan_check_version">Vulkan 版本：%s</string>
     <string name="game_vulkan_check_turnip">使用 Turnip：%s</string>
+    <string name="game_vulkan_check_versions">各版本支持情况：</string>
+    <string name="game_vulkan_check_profile_supp">支持</string>
+    <string name="game_vulkan_check_profile_unsupp">不支持</string>
+    <string name="game_vulkan_check_dep_required">必需：</string>
+    <string name="game_vulkan_check_dep_optional">可选：</string>
+    <string name="game_vulkan_check_item_missing">（缺失）</string>
+    <string name="game_vulkan_check_failed">无法获取设备的 Vulkan 支持情况</string>
+    <string name="game_vulkan_check_partial">您的设备仅支持使用 Vulkan 运行部分 Minecraft 版本：</string>
     <string name="game_vulkan_check_extensions">依赖的扩展：</string>
-    <string name="game_vulkan_check_missing_extensions">缺失的扩展：</string>
     <string name="game_vulkan_check_features">依赖的功能：</string>
-    <string name="game_vulkan_check_missing_features">缺失的功能：</string>
-    <string name="game_vulkan_check_unsupp">您的设备不支持使用 Vulkan 运行 Minecraft 26.2+</string>
-    <string name="game_vulkan_check_supp">您的设备可以使用 Vulkan 运行 Minecraft 26.2+</string>
+    <string name="game_vulkan_check_unsupp">您的设备不支持使用 Vulkan 运行任何 Minecraft 版本</string>
+    <string name="game_vulkan_check_supp">您的设备可以使用 Vulkan 运行 Minecraft %s 及以上版本</string>
     <!--  渲染器  -->
     <string name="renderer_version_support">MC 版本支持：</string>
     <string name="renderer_version_unsupported_warning">当前渲染器 %s 不支持该游戏版本，继续使用可能导致渲染错误或游戏崩溃！您确定要无视风险坚持访问吗？</string>

@@ -430,12 +430,18 @@
     <string name="game_vulkan_check_text">Check whether your device supports running Minecraft 26.2+ with Vulkan. Results are for reference only.</string>
     <string name="game_vulkan_check_version">Vulkan version: %s</string>
     <string name="game_vulkan_check_turnip">Using Turnip: %s</string>
-    <string name="game_vulkan_check_extensions">Required extensions:</string>
-    <string name="game_vulkan_check_missing_extensions">Missing extensions:</string>
-    <string name="game_vulkan_check_features">Required features:</string>
-    <string name="game_vulkan_check_missing_features">Missing features:</string>
-    <string name="game_vulkan_check_unsupp">Your device does not support running Minecraft 26.2+ with Vulkan</string>
-    <string name="game_vulkan_check_supp">Your device supports running Minecraft 26.2+ with Vulkan</string>
+    <string name="game_vulkan_check_versions">Version support:</string>
+    <string name="game_vulkan_check_profile_supp">Supported</string>
+    <string name="game_vulkan_check_profile_unsupp">Unsupported</string>
+    <string name="game_vulkan_check_dep_required">Required:</string>
+    <string name="game_vulkan_check_dep_optional">Optional:</string>
+    <string name="game_vulkan_check_item_missing">" (missing)"</string>
+    <string name="game_vulkan_check_failed">Unable to retrieve the Vulkan capabilities of this device</string>
+    <string name="game_vulkan_check_partial">Your device can only run some Minecraft versions with Vulkan:</string>
+    <string name="game_vulkan_check_extensions">Extensions:</string>
+    <string name="game_vulkan_check_features">Features:</string>
+    <string name="game_vulkan_check_unsupp">Your device does not support running any Minecraft version with Vulkan</string>
+    <string name="game_vulkan_check_supp">Your device can run Minecraft %s and later with Vulkan</string>
     <!-- Renderers -->
     <string name="renderer_version_support">MC Version Support:</string>
     <string name="renderer_version_unsupported_warning">The current renderer %s does not support this game version. Continuing to use it may cause rendering errors or crashes! Are you sure you want to proceed?</string>
