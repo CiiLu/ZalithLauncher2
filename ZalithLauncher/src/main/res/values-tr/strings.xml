@@ -483,6 +483,13 @@
     <string name="settings_renderer_from_plugins">%s eklentisinden</string>
     <string name="settings_renderer_resolution_scale_title">Çözünürlük</string>
     <string name="settings_renderer_resolution_scale_summary">Değer düşük oldukça performans artar, değer yüksek oldukça görüntü kalitesi artar; ihtiyacınıza göre ayarlayın</string>
+
+    <string name="settings_renderer_resolution_rule_title">Çözünürlük Kuralı</string>
+    <string name="settings_renderer_resolution_rule_summary">Oyun penceresi çözünürlüğünün nasıl hesaplanacağını seçin</string>
+    <string name="settings_renderer_resolution_rule_percentage">Yüzde</string>
+    <string name="settings_renderer_resolution_custom_summary">Oyunu tam genişlik ve yükseklikle işleyin; görüntü ekrana sığacak şekilde ölçeklenir</string>
+    <string name="settings_renderer_resolution_custom_width">Genişlik</string>
+    <string name="settings_renderer_resolution_custom_height">Yükseklik</string>
     <string name="settings_renderer_full_screen_title">Oyun Tam Ekranı</string>
     <string name="settings_renderer_full_screen_summary">Oyun ekranını tam ekran yapar, çentikli ekranlar, delikli ekranlar gibi ekran güvenlik alanlarını görmezden gelir</string>
     <string name="settings_renderer_sustained_performance_title">Sürekli Performans Modu</string>

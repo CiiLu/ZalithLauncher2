@@ -478,6 +478,13 @@
     <string name="settings_game_version_isolation_summary">Mengisolasi semua versi supaya datanya tidak saling ganggu</string>
     <string name="settings_renderer_vulkan_driver_system_title">Gunakan Driver Vulkan Sistem</string>
     <string name="settings_renderer_resolution_scale_summary">Nilai rendah bikin performa lebih bagus; nilai tinggi ningkatin kualitas grafik. Atur sesuai kebutuhanmu</string>
+
+    <string name="settings_renderer_resolution_rule_title">Aturan Resolusi</string>
+    <string name="settings_renderer_resolution_rule_summary">Pilih cara menghitung resolusi jendela permainan</string>
+    <string name="settings_renderer_resolution_rule_percentage">Persentase</string>
+    <string name="settings_renderer_resolution_custom_summary">Jalankan permainan dengan lebar dan tinggi yang tepat; gambar akan diskalakan agar pas dengan layar</string>
+    <string name="settings_renderer_resolution_custom_width">Lebar</string>
+    <string name="settings_renderer_resolution_custom_height">Tinggi</string>
     <string name="settings_control_physical_key_bind_ime_title">Pintasan IME keyboard</string>
     <string name="settings_control_physical_key_bind_ime_un_bind">Belum terikat</string>
     <string name="settings_control_physical_key_bind_ime_bound">Tombol terikat: %s</string>

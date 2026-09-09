@@ -265,6 +265,13 @@
     <string name="settings_renderer_global_renderer_summary">O renderizador global padrão usa uma camada de tradução de biblioteca dinâmica para garantir que o jogo funcione suavemente em dispositivos móveis</string>
     <string name="settings_renderer_resolution_scale_title">Escala de Resolução</string>
     <string name="settings_renderer_resolution_scale_summary">Valores mais baixos melhoram o desempenho; valores mais altos aumentam a qualidade gráfica. Ajuste de acordo com suas necessidades</string>
+
+    <string name="settings_renderer_resolution_rule_title">Regra de resolução</string>
+    <string name="settings_renderer_resolution_rule_summary">Escolha como a resolução da janela do jogo é calculada</string>
+    <string name="settings_renderer_resolution_rule_percentage">Percentagem</string>
+    <string name="settings_renderer_resolution_custom_summary">Renderiza o jogo com uma largura e altura exatas; a imagem é dimensionada para caber no ecrã</string>
+    <string name="settings_renderer_resolution_custom_width">Largura</string>
+    <string name="settings_renderer_resolution_custom_height">Altura</string>
     <string name="generic_all">Todos</string>
     <string name="crash_type">Tipo de crash: %s</string>
     <string name="crash_type_launcher">O launcher crashou</string>

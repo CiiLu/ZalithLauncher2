@@ -783,6 +783,13 @@
     <string name="settings_renderer_from_plugins">來自 %s 外掛程式</string>
     <string name="settings_renderer_resolution_scale_title">遊戲視窗解析度</string>
     <string name="settings_renderer_resolution_scale_summary">數值越低效能越高，數值越高畫質越清晰，請依實際需求調整</string>
+
+    <string name="settings_renderer_resolution_rule_title">解析度規則</string>
+    <string name="settings_renderer_resolution_rule_summary">選擇遊戲視窗解析度的計算規則</string>
+    <string name="settings_renderer_resolution_rule_percentage">百分比</string>
+    <string name="settings_renderer_resolution_custom_summary">以精確的寬高渲染遊戲，畫面將等比縮放以適應螢幕</string>
+    <string name="settings_renderer_resolution_custom_width">寬度</string>
+    <string name="settings_renderer_resolution_custom_height">高度</string>
     <string name="settings_renderer_full_screen_title">遊戲頁面全螢幕化</string>
     <string name="settings_renderer_full_screen_summary">使遊戲頁面全螢幕化，忽略瀏海螢幕、挖孔螢幕等螢幕的安全區域</string>
     <string name="settings_renderer_sustained_performance_title">啟用持續效能模式</string>

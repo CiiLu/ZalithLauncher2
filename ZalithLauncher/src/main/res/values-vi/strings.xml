@@ -512,6 +512,13 @@
     <string name="settings_renderer_from_plugins">Từ plugin %s</string>
     <string name="settings_renderer_resolution_scale_title">Độ phân giải</string>
     <string name="settings_renderer_resolution_scale_summary">Càng thấp càng khỏe, càng cao càng đẹp</string>
+
+    <string name="settings_renderer_resolution_rule_title">Quy tắc độ phân giải</string>
+    <string name="settings_renderer_resolution_rule_summary">Chọn cách tính độ phân giải của cửa sổ trò chơi</string>
+    <string name="settings_renderer_resolution_rule_percentage">Phần trăm</string>
+    <string name="settings_renderer_resolution_custom_summary">Kết xuất trò chơi với chiều rộng và chiều cao chính xác; hình ảnh sẽ được chia tỷ lệ để vừa với màn hình</string>
+    <string name="settings_renderer_resolution_custom_width">Chiều rộng</string>
+    <string name="settings_renderer_resolution_custom_height">Chiều cao</string>
     <string name="settings_renderer_full_screen_title">Toàn màn hình game</string>
     <string name="settings_renderer_full_screen_summary">Kéo căng game ra toàn màn hình, bỏ qua vùng an toàn</string>
     <string name="settings_renderer_sustained_performance_title">Chế độ hiệu năng bền bỉ</string>
