@@ -19,8 +19,9 @@ static pthread_mutex_t bridge_lock = PTHREAD_MUTEX_INITIALIZER;
 static JavaVM *dalvik_vm;
 static jobject application;
 static jclass bridge_class;
-static jmethodID bridge_init;   // ()Z
-static jmethodID bridge_speak;  // ([BF)F
+static jmethodID bridge_init;    // ()Z
+static jmethodID bridge_speak;   // ([BF)F
+static jmethodID bridge_cancel;  // ()V
 static int bridge_ready;
 
 // text2speech 1.18.11（MC 26.x）的合成流程在 Java 侧逐句持有
@@ -71,7 +72,8 @@ static int setup_bridge(JNIEnv *env) {
     (*env)->DeleteLocalRef(env, cls);
     bridge_init = (*env)->GetStaticMethodID(env, bridge_class, "init", "()Z");
     bridge_speak = (*env)->GetStaticMethodID(env, bridge_class, "speak", "([BF)F");
-    if (bridge_init == NULL || bridge_speak == NULL) return 0;
+    bridge_cancel = (*env)->GetStaticMethodID(env, bridge_class, "cancel", "()V");
+    if (bridge_init == NULL || bridge_speak == NULL || bridge_cancel == NULL) return 0;
     return 1;
 
 fail:
@@ -154,6 +156,15 @@ JNIEXPORT jfloat JNICALL flite_text_to_speech(const char *text, void *voice, con
     (void) voice;
     (void) out;
     return fcl_flite_say(text);
+}
+
+// 游戏侧打断复述的截停入口
+JNIEXPORT void JNICALL flite_cancel(void) {
+    if (!ensure_bridge()) return;
+    JNIEnv *env = attach_dalvik();
+    if (env == NULL) return;
+    (*env)->CallStaticVoidMethod(env, bridge_class, bridge_cancel);
+    if ((*env)->ExceptionCheck(env)) (*env)->ExceptionClear(env);
 }
 
 // flite 引擎接口（text2speech 1.18.11+，MC 26.x）：

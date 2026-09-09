@@ -41,10 +41,6 @@ object FliteTts {
     private const val TAG = "FliteTTS"
     /** init 的快速判定窗口：无引擎时 onInit(ERROR) 几乎立即到达，超时则视为引擎仍在冷启动 */
     private const val FAST_CHECK_SECONDS = 2L
-    /** 朗读阶段等待引擎就绪的上限，TTS 引擎进程冷启动在部分 ROM 上可达数十秒 */
-    private const val READY_WAIT_SECONDS = 20L
-    /** 单次朗读的完成等待上限，防止引擎僵死挂住游戏侧朗读线程 */
-    private const val SPEAK_WAIT_SECONDS = 30L
 
     private const val STATE_UNINIT = 0
     private const val STATE_INITIALIZING = 1
@@ -54,6 +50,9 @@ object FliteTts {
     // TextToSpeech 需要在带 Looper 的线程上构建与回调，游戏侧调用线程没有 Looper
     private val ttsThread = HandlerThread(TAG)
         .apply { start() }
+
+    // 只在对象锁内读写，与 state 的流转共享同一把锁
+    private val pending = ArrayDeque<PendingSpeech>()
 
     @Volatile
     private var state = STATE_UNINIT
@@ -69,9 +68,11 @@ object FliteTts {
     private val triedEngines: MutableSet<String> = ConcurrentHashMap.newKeySet()
 
     private val utteranceCounter = AtomicLong()
-    private val pendingUtterances = ConcurrentHashMap<String, CountDownLatch>()
 
-    /** 初始化 TTS 引擎；引擎冷启动时乐观返回 true，就绪等待由朗读阶段承担 */
+    /** 引擎就绪前到达的朗读文本，就绪后按序补播 */
+    private data class PendingSpeech(val text: String, val gain: Float)
+
+    /** 初始化 TTS 引擎；引擎冷启动时乐观返回 true，就绪前的朗读会在就绪后按序补播 */
     @JvmStatic
     fun init(): Boolean {
         synchronized(this) {
@@ -96,49 +97,56 @@ object FliteTts {
         return if (arrived) state == STATE_READY else true
     }
 
-    /** 朗读一段 UTF-8 文本并阻塞至播放完成，返回耗时秒数；gain 为相对音量（1.0 为默认）；不可用或失败返回 -1 */
+    /** 排队朗读一段 UTF-8 文本并立即返回；不可用或文本无效返回 -1 */
     @JvmStatic
     fun speak(message: ByteArray, gain: Float): Float {
         if (state == STATE_FAILED) return -1f
-        if (state == STATE_INITIALIZING) {
-            // 朗读发生在游戏侧串行队列上，阻塞等待与 flite 的同步播放语义一致
-            try {
-                readySignal.await(READY_WAIT_SECONDS, TimeUnit.SECONDS)
-            } catch (_: InterruptedException) {
-                return -1f
-            }
-        }
-        if (state != STATE_READY) return -1f
-        val instance = tts ?: return -1f
         val text = runCatching { String(message, Charsets.UTF_8) }.getOrNull() ?: return -1f
         if (text.isBlank()) return -1f
-        val utteranceId = "zl-flite-${utteranceCounter.incrementAndGet()}"
-        val done = CountDownLatch(1)
-        pendingUtterances[utteranceId] = done
-        try {
-            val params = Bundle().apply { putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, gain) }
-            if (instance.speak(text, TextToSpeech.QUEUE_ADD, params, utteranceId) != TextToSpeech.SUCCESS) return -1f
-            val start = System.nanoTime()
-            if (!done.await(SPEAK_WAIT_SECONDS, TimeUnit.SECONDS)) return -1f
-            return (System.nanoTime() - start) / 1_000_000_000f
-        } catch (_: InterruptedException) {
-            return -1f
-        } finally {
-            pendingUtterances.remove(utteranceId)
+        synchronized(this) {
+            val instance = tts
+            if (state == STATE_READY && instance != null) {
+                enqueue(instance, text, gain)
+            } else {
+                pending.addLast(PendingSpeech(text, gain))
+            }
         }
+        return 0f
     }
 
-    /** 释放 TTS 引擎并唤醒所有阻塞中的朗读 */
+    /** 立即停止当前朗读并丢弃全部排队文本，游戏打断复述时的截停入口 */
+    @JvmStatic
+    fun cancel() {
+        synchronized(this) { pending.clear() }
+        tts?.runCatching { stop() }
+    }
+
+    /** 释放 TTS 引擎并丢弃全部排队文本 */
     @JvmStatic
     @Synchronized
     fun shutdown() {
         state = STATE_UNINIT
         releaseInstance()
+        pending.clear()
         readySignal.countDown()
         triedEngines.clear()
         candidateEngines = emptyList()
-        pendingUtterances.keys.toList().forEach { id ->
-            pendingUtterances.remove(id)?.countDown()
+    }
+
+    private fun enqueue(instance: TextToSpeech, text: String, gain: Float) {
+        val utteranceId = "zl-flite-${utteranceCounter.incrementAndGet()}"
+        val params = Bundle().apply { putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, gain) }
+        if (instance.speak(text, TextToSpeech.QUEUE_ADD, params, utteranceId) != TextToSpeech.SUCCESS) {
+            Logger.error(TAG, "speak enqueue failed: $utteranceId")
+        }
+    }
+
+    /** 须持对象锁调用：把引擎就绪前排队的文本按序补播进 TTS 队列 */
+    private fun drainPending() {
+        val instance = tts ?: return
+        while (pending.isNotEmpty()) {
+            val speech = pending.removeFirst()
+            enqueue(instance, speech.text, speech.gain)
         }
     }
 
@@ -148,8 +156,13 @@ object FliteTts {
             val listener = TextToSpeech.OnInitListener { code ->
                 if (state == STATE_INITIALIZING) {
                     if (code == TextToSpeech.SUCCESS) {
-                        ref.get()?.let { tts = it }
-                        state = STATE_READY
+                        synchronized(this) {
+                            if (state == STATE_INITIALIZING) {
+                                ref.get()?.let { tts = it }
+                                state = STATE_READY
+                                drainPending()
+                            }
+                        }
                         Logger.info(TAG, "TextToSpeech ready (engine=${engine ?: "default"})")
                         signal.countDown()
                     } else {
@@ -170,18 +183,14 @@ object FliteTts {
             instance.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                 override fun onStart(utteranceId: String?) {}
 
-                override fun onDone(utteranceId: String?) {
-                    release(utteranceId)
-                }
+                override fun onDone(utteranceId: String?) {}
 
                 @Deprecated("Deprecated in Java")
                 override fun onError(utteranceId: String?) {
-                    release(utteranceId)
+                    Logger.error(TAG, "utterance failed: $utteranceId")
                 }
 
-                override fun onStop(utteranceId: String?, interrupted: Boolean) {
-                    release(utteranceId)
-                }
+                override fun onStop(utteranceId: String?, interrupted: Boolean) {}
             })
             synchronized(this) {
                 if (state != STATE_INITIALIZING) {
@@ -204,6 +213,7 @@ object FliteTts {
         val next = candidateEngines.firstOrNull { it !in triedEngines }
         if (next == null) {
             state = STATE_FAILED
+            pending.clear()
             Logger.error(TAG, "no usable TTS engine (tried=$triedEngines), narrator disabled")
             signal.countDown()
             return
@@ -213,10 +223,6 @@ object FliteTts {
             failed?.runCatching { shutdown() }
             constructTts(signal, next)
         }
-    }
-
-    private fun release(utteranceId: String?) {
-        utteranceId?.let(pendingUtterances::remove)?.countDown()
     }
 
     private fun releaseInstance() {
