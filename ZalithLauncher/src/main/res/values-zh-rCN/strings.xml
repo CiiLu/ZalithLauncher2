@@ -155,6 +155,8 @@
     <string name="notification_data_jvm_service_running">正在前台服务安装游戏中</string>
     <string name="notification_data_terracotta_message">在多人联机的过程中，启动器会使用前台服务来显示当前联机状态，因此需要您开启通知权限。</string>
     <string name="notification_jvm_running_name">JVM 保活服务</string>
+    <string name="notification_task_service_name">任务保活服务</string>
+    <string name="notification_task_service_running">正在后台运行任务，请保持启动器运行</string>
     <!--  麦克风  -->
     <string name="microphone_check_title">检查麦克风输入</string>
     <string name="microphone_check_volume">音量：%d</string>
