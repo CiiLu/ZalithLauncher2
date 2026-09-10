@@ -44,12 +44,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.filemanager.logic.entry.FmEntry
+import com.movtery.zalithlauncher.filemanager.ui.theme.fmCardColor
 import com.movtery.zalithlauncher.filemanager.ui.theme.fmOnCardColor
 import com.movtery.zalithlauncher.filemanager.ui.theme.fmSecondaryTextColor
 import com.movtery.zalithlauncher.filemanager.ui.theme.fmSelectionColor
@@ -65,6 +67,7 @@ fun FmEntryItem(
     selected: Boolean,
     cutMarked: Boolean,
     highlighted: Boolean = false,
+    position: FmCardPosition = FmCardPosition.Single,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
@@ -80,6 +83,7 @@ fun FmEntryItem(
     onDelete: () -> Unit = {}
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
+    val shape = rememberFmCardShape(position)
     val selectionColor = fmSelectionColor()
     val unselectionColor = selectionColor.copy(alpha = 0f)
     val bg by animateColorAsState(
@@ -101,6 +105,8 @@ fun FmEntryItem(
                 triggerable = true,
                 onTriggered = onSwipeTrigger
             )
+            .clip(shape)
+            .background(fmCardColor())
             .background(bg)
             .combinedClickable(
                 onClick = {
