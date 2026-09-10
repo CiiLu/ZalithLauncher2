@@ -140,6 +140,8 @@
     <string name="notification_data_jvm_service_running">正在透過前景服務安裝遊戲中</string>
     <string name="notification_data_terracotta_message">在多人連線的過程中，啟動器會使用前台服務來顯示當前連線狀態，因此需要您開啟通知權限。</string>
     <string name="notification_jvm_running_name">JVM 保活服務</string>
+    <string name="notification_task_service_name">任務保活服務</string>
+    <string name="notification_task_service_running">正在背景下執行任務，請保持啟動器運行</string>
     <!--  麥克風  -->
     <string name="microphone_check_title">檢查麥克風輸入</string>
     <string name="microphone_check_volume">音量：%d</string>
