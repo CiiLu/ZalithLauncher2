@@ -351,6 +351,13 @@
     <string name="settings_renderer_from_plugins">Из плагина %s</string>
     <string name="settings_renderer_resolution_scale_title">Разрешение экрана</string>
     <string name="settings_renderer_resolution_scale_summary">Меньшее значение может увеличить FPS, но изображение станет мыльным, так же и в обратную сторону (ᵔ⩊ᵔ)</string>
+
+    <string name="settings_renderer_resolution_rule_title">Правило разрешения</string>
+    <string name="settings_renderer_resolution_rule_summary">Выберите способ расчёта разрешения игрового окна</string>
+    <string name="settings_renderer_resolution_rule_percentage">Процент</string>
+    <string name="settings_renderer_resolution_custom_summary">Запускайте игру с точной шириной и высотой; изображение масштабируется под экран</string>
+    <string name="settings_renderer_resolution_custom_width">Ширина</string>
+    <string name="settings_renderer_resolution_custom_height">Высота</string>
     <string name="settings_renderer_full_screen_title">Игнорирование выреза</string>
     <string name="settings_renderer_full_screen_summary">Игнорирует вырез под фронтальную камеру и даёт дополнительное место для изображение под ней</string>
     <string name="settings_renderer_sustained_performance_title">Режим стабильной производительности</string>

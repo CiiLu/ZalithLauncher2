@@ -822,6 +822,13 @@
     <string name="settings_renderer_from_plugins">플러그인 \'%s\'에서</string>
     <string name="settings_renderer_resolution_scale_title">해상도</string>
     <string name="settings_renderer_resolution_scale_summary">낮을수록 성능이, 높을수록 그래픽 품질이 향상됩니다. 필요에 따라 조정해 주세요</string>
+
+    <string name="settings_renderer_resolution_rule_title">해상도 규칙</string>
+    <string name="settings_renderer_resolution_rule_summary">게임 창 해상도의 계산 방식을 선택하세요</string>
+    <string name="settings_renderer_resolution_rule_percentage">백분율</string>
+    <string name="settings_renderer_resolution_custom_summary">지정한 너비와 높이로 게임을 렌더링하며, 화면에 맞게 크기가 조절됩니다</string>
+    <string name="settings_renderer_resolution_custom_width">너비</string>
+    <string name="settings_renderer_resolution_custom_height">높이</string>
     <string name="settings_renderer_full_screen_title">게임 전체화면</string>
     <string name="settings_renderer_sustained_performance_title">성능 지속 모드</string>
     <string name="settings_renderer_sustained_performance_summary">이 기능을 활성화하면 장시간 안정적인 성능이 제공되지만, 과열을 방지하기 위해 반응 속도가 떨어질 수 있습니다</string>

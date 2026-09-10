@@ -47,13 +47,16 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.viewinterop.AndroidView
@@ -91,6 +94,7 @@ import com.movtery.zalithlauncher.game.renderer.Renderers
 import com.movtery.zalithlauncher.game.sdl.SdlBridge
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.setting.enums.ResolutionRule
 import com.movtery.zalithlauncher.terracotta.TerracottaVPNService
 import com.movtery.zalithlauncher.ui.base.BaseAppCompatActivity
 import com.movtery.zalithlauncher.ui.base.ObserveFullScreenSetting
@@ -101,9 +105,12 @@ import com.movtery.zalithlauncher.ui.screens.game.elements.OpenFolderLayer
 import com.movtery.zalithlauncher.ui.screens.game.elements.OpenFolderOperation
 import com.movtery.zalithlauncher.ui.theme.ZalithLauncherTheme
 import com.movtery.zalithlauncher.ui.toAndroidString
+import com.movtery.zalithlauncher.utils.computeGameDisplayLayout
+import com.movtery.zalithlauncher.utils.computeGameRenderSize
 import com.movtery.zalithlauncher.utils.device.PhysicalMouseChecker
 import com.movtery.zalithlauncher.utils.getDisplayFriendlyRes
 import com.movtery.zalithlauncher.utils.getParcelableSafely
+import com.movtery.zalithlauncher.utils.rememberGameRenderSize
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
 import com.movtery.zalithlauncher.viewmodel.EventViewModel
 import com.movtery.zalithlauncher.viewmodel.GamepadViewModel
@@ -584,6 +591,14 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
         }
     }
 
+    /**
+     * 尺寸刷新的参照屏幕尺寸
+     * 自定义分辨率下游戏 Surface 不再铺满全屏，其视图尺寸不能作为参照，此时优先使用全屏布局尺寸
+     */
+    private fun referenceScreenSize(fallback: IntSize): IntSize {
+        return vmViewModel.screenSize.takeIf { it.width > 0 && it.height > 0 } ?: fallback
+    }
+
     private var lastWindowSize: IntSize? = null
     private var refreshSizeJob: Job? = null
     private var pendingRefreshSize: IntSize? = null
@@ -605,19 +620,15 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
     private fun refreshWindowSize(
         screenSize: IntSize
     ): IntSize {
-        fun getDisplayPixels(pixels: Int): Int {
-            return withHandler {
-                when (type) {
-                    HandlerType.GAME -> getDisplayFriendlyRes(pixels, AllSettings.resolutionRatio.getValue().toFloat() / 100f)
-                    HandlerType.JVM -> getDisplayFriendlyRes(pixels, 0.8f)
-                }
+        val newSize = withHandler {
+            when (type) {
+                HandlerType.GAME -> computeGameRenderSize(screenSize)
+                HandlerType.JVM -> IntSize(
+                    getDisplayFriendlyRes(screenSize.width, 0.8f),
+                    getDisplayFriendlyRes(screenSize.height, 0.8f)
+                )
             }
         }
-
-        val newSize = IntSize(
-            getDisplayPixels(screenSize.width),
-            getDisplayPixels(screenSize.height)
-        )
         // 尺寸未变化时跳过重复应用
         if (newSize == lastWindowSize) return newSize
         lastWindowSize = newSize
@@ -759,7 +770,7 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
 
     override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
         if (withHandler { mIsSurfaceDestroyed }) return
-        requestRefreshWindowSize(screenSize = IntSize(width, height))
+        requestRefreshWindowSize(screenSize = referenceScreenSize(fallback = IntSize(width, height)))
     }
 
     override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
@@ -782,7 +793,7 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
         val viewWidth = gameSurfaceView?.width ?: 0
         val viewHeight = gameSurfaceView?.height ?: 0
         if (viewWidth <= 0 || viewHeight <= 0) return
-        requestRefreshWindowSize(screenSize = IntSize(viewWidth, viewHeight))
+        requestRefreshWindowSize(screenSize = referenceScreenSize(fallback = IntSize(viewWidth, viewHeight)))
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
@@ -826,6 +837,7 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
     ) {
         val imeInsets = WindowInsets.ime
         val inputArea by withHandler { inputArea }.collectAsStateWithLifecycle()
+        val density = LocalDensity.current
 
         BoxWithConstraints(
             modifier = Modifier
@@ -844,9 +856,23 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
                 }
             }
 
+            //游戏模式下使用自定义分辨率时，游戏画面等比缩放居中显示（黑边）
+            val letterboxed = withHandler { type } == HandlerType.GAME &&
+                    AllSettings.resolutionRule.state == ResolutionRule.CUSTOM
+            val renderSize = rememberGameRenderSize(screenSize)
+            val displaySize = if (letterboxed) computeGameDisplayLayout(screenSize, renderSize).displaySize else screenSize
+
             AndroidView(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .then(
+                        if (displaySize == screenSize) Modifier.fillMaxSize()
+                        else Modifier
+                            .align(Alignment.Center)
+                            .size(
+                                width = with(density) { displaySize.width.toDp() },
+                                height = with(density) { displaySize.height.toDp() }
+                            )
+                    )
                     .absoluteOffset {
                         val area = inputArea ?: return@absoluteOffset IntOffset.Zero
                         val imeHeight = imeInsets.getBottom(this@absoluteOffset)
