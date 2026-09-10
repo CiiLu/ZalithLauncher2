@@ -618,13 +618,6 @@ private fun Modifier.glass(
         (blur / 80f).coerceIn(0f, 1f)
     }
 
-    val noiseFactor = remember(t) {
-        lerp(
-            start = 0.3f,
-            stop = 0.25f,
-            fraction = sqrt(t)
-        )
-    }
     val colorEffects = remember(t, color) {
         val whiteAlpha = lerp(
             start = 0f,
@@ -647,7 +640,6 @@ private fun Modifier.glass(
         style = HazeBlurStyle {
             blurEnabled(true)
             blurRadius(blur.dp)
-            noiseFactor(noiseFactor)
             colorEffects(colorEffects)
         }
     )
