@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,8 +35,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -83,7 +80,10 @@ import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
+import com.movtery.zalithlauncher.ui.components.ButtonPosition
 import com.movtery.zalithlauncher.ui.components.MarqueeText
+import com.movtery.zalithlauncher.ui.components.PositionButton
+import com.movtery.zalithlauncher.ui.components.PositionFilledTonalButton
 import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
 import com.movtery.zalithlauncher.ui.components.VideoPlayer
 import com.movtery.zalithlauncher.ui.components.rememberDialogMaxHeight
@@ -488,7 +488,7 @@ private fun AccountRefreshFailedDialog(
                 ) {
                     Text(
                         text = stringResource(R.string.account_refresh_failed_title),
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.headlineSmall
                     )
                     Spacer(modifier = Modifier.size(12.dp))
 
@@ -510,27 +510,30 @@ private fun AccountRefreshFailedDialog(
                     }
                     Spacer(modifier = Modifier.size(16.dp))
 
-                    Row(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
-                        FilledTonalButton(
-                            modifier = Modifier.weight(1f),
-                            onClick = onCancel
-                        ) {
-                            MarqueeText(text = stringResource(R.string.generic_cancel))
-                        }
-                        FilledTonalButton(
-                            modifier = Modifier.weight(1f),
+                        PositionButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            position = ButtonPosition.Top,
                             onClick = onRetry
                         ) {
                             MarqueeText(text = stringResource(R.string.account_refresh_failed_retry))
                         }
-                        Button(
-                            modifier = Modifier.weight(1f),
+                        PositionFilledTonalButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            position = ButtonPosition.Middle,
                             onClick = onSkip
                         ) {
                             MarqueeText(text = stringResource(R.string.account_refresh_failed_skip))
+                        }
+                        PositionFilledTonalButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            position = ButtonPosition.Bottom,
+                            onClick = onCancel
+                        ) {
+                            MarqueeText(text = stringResource(R.string.generic_cancel))
                         }
                     }
                 }
