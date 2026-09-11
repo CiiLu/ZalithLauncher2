@@ -33,6 +33,7 @@ import com.movtery.zalithlauncher.game.version.mod.matchInstalledMods
 import com.movtery.zalithlauncher.game.version.mod.scanModFingerprints
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.utils.logging.Logger
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -90,9 +91,11 @@ class DownloadModViewModel : ViewModel() {
      * 同版本重复扫描时保留旧结果直至新结果就绪，避免标注闪烁
      */
     fun scan(version: Version?) {
+        val versionName = version?.getVersionName()
+        if (scanJob?.isActive == true && versionName == scannedVersionName) return
+
         scanJob?.cancel()
 
-        val versionName = version?.getVersionName()
         if (versionName != scannedVersionName) {
             installedByProject = emptyMap()
             installedByVersion = emptyMap()
@@ -102,17 +105,23 @@ class DownloadModViewModel : ViewModel() {
 
         scanJob = viewModelScope.launch {
             matching = true
-            scannedVersionName = versionName
-            scannedFingerprints = version?.let { ver ->
-                runCatching {
-                    scanModFingerprints(VersionFolders.MOD.getDir(ver.getGameDir()))
-                }.onFailure { e ->
-                    Logger.warning(TAG, "Failed to scan local mod fingerprints", e)
-                }.getOrDefault(emptyList())
-            } ?: emptyList()
+            try {
+                scannedVersionName = versionName
+                scannedFingerprints = version?.let { ver ->
+                    try {
+                        scanModFingerprints(VersionFolders.MOD.getDir(ver.getGameDir()))
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Throwable) {
+                        Logger.warning(TAG, "Failed to scan local mod fingerprints", e)
+                        emptyList()
+                    }
+                } ?: emptyList()
 
-            applyMatches(currentPlatform)
-            matching = false
+                applyMatches(currentPlatform)
+            } finally {
+                matching = false
+            }
         }
     }
 

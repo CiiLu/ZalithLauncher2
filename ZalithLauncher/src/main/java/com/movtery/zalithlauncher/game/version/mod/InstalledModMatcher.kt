@@ -24,6 +24,7 @@ import com.movtery.zalithlauncher.game.download.assets.platform.getCFFilesByFing
 import com.movtery.zalithlauncher.game.download.assets.platform.getModrinthVersBySha1
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.tencent.mmkv.MMKV
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -61,11 +62,14 @@ suspend fun scanModFingerprints(modsDir: File): List<ModFingerprints> =
             files.map { file ->
                 async {
                     semaphore.withPermit {
-                        runCatching {
+                        try {
                             computeModFingerprints(file)
-                        }.onFailure { e ->
+                        } catch (e: CancellationException) {
+                            throw e
+                        } catch (e: Throwable) {
                             Logger.warning(TAG, "Failed to compute mod fingerprints: ${file.name}", e)
-                        }.getOrNull()
+                            null
+                        }
                     }
                 }
             }.awaitAll().filterNotNull()
@@ -104,21 +108,24 @@ suspend fun matchInstalledMods(
     // 分块批量查询，块内成功时才允许写入持久缓存（含未命中的负缓存），
     // 失败的块不写任何缓存，留待下次重试
     for (chunk in uncached.chunked(FINGERPRINT_BATCH_SIZE)) {
-        runCatching {
+        val fetched = try {
             when (platform) {
                 Platform.MODRINTH -> getModrinthVersBySha1(chunk.map { it.sha1 })
                 Platform.CURSEFORGE ->
                     getCFFilesByFingerprints(chunk.map { it.murmur2 }).mapKeys { it.key.toString() }
             }
-        }.onSuccess { fetched ->
-            for (print in chunk) {
-                val installed = fetched[print.fingerprintValue(platform)]?.toInstalledMod() ?: notFoundMod(platform)
-                cache.encode(print.cacheKey(platform), installed, MMKV.ExpireInDay)
-                collect(installed)
-            }
-        }.onFailure { e ->
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Throwable) {
             complete = false
             Logger.warning(TAG, "Failed to match installed mods on platform: $platform", e)
+            null
+        } ?: continue
+
+        for (print in chunk) {
+            val installed = fetched[print.fingerprintValue(platform)]?.toInstalledMod() ?: notFoundMod(platform)
+            cache.encode(print.cacheKey(platform), installed, MMKV.ExpireInDay)
+            collect(installed)
         }
     }
 
