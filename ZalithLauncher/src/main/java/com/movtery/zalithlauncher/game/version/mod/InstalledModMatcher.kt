@@ -18,7 +18,6 @@
 
 package com.movtery.zalithlauncher.game.version.mod
 
-import com.movtery.zalithlauncher.game.download.assets.platform.FINGERPRINT_BATCH_SIZE
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.getCFFilesByFingerprints
 import com.movtery.zalithlauncher.game.download.assets.platform.getModrinthVersBySha1
@@ -29,12 +28,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import java.io.File
 
 private const val TAG = "InstalledModMatcher"
+
+/** 单次批量匹配的指纹数量，较小的批次可显著降低单次响应的解析内存开销 */
+private const val MATCH_BATCH_SIZE = 25
+
+/** 同时进行的批量匹配请求数量 */
+private const val MATCH_PARALLELISM = 4
 
 /**
  * 本地模组指纹的平台匹配结果
@@ -80,23 +87,24 @@ suspend fun scanModFingerprints(modsDir: File): List<ModFingerprints> =
  * 将本地模组指纹与指定平台匹配，得到本地已安装的模组信息
  *
  * 优先读取持久缓存，只对未命中的指纹发起批量查询；
- * 每匹配到一批结果便通过[onCollect]增量回调，调用方可实时同步到UI
+ * 每批取回后立即写入持久缓存并通过[onCollect]增量回调，调用方可实时同步到UI
  *
- * @param onCollect 增量匹配结果回调，在匹配协程内按顺序依次回调，不会并发
+ * @param onCollect 增量匹配结果回调，全部在互斥锁内按顺序触发，不会并发
  */
 suspend fun matchInstalledMods(
     fingerprints: List<ModFingerprints>,
     platform: Platform,
     onCollect: suspend (MatchedInstalledMods) -> Unit = {}
 ): MatchedInstalledMods {
+    val mutex = Mutex()
     val byProject = mutableMapOf<String, InstalledMod>()
     val byVersion = mutableMapOf<String, InstalledMod>()
     if (fingerprints.isEmpty()) {
         return MatchedInstalledMods(byProject, byVersion, complete = true)
     }
 
-    var complete = true
     val pending = mutableListOf<InstalledMod>()
+    var complete = true
 
     fun collect(installed: InstalledMod) {
         if (installed.notFound) return
@@ -120,38 +128,54 @@ suspend fun matchInstalledMods(
 
     val cache = installedModCache()
     val uncached = mutableListOf<ModFingerprints>()
-    for (print in fingerprints) {
-        val cached = cache.decodeParcelable(print.cacheKey(platform), InstalledMod::class.java)
-        if (cached != null) collect(cached) else uncached.add(print)
-    }
-    flush()
-
-    // 分块批量查询，块内成功时才允许写入持久缓存（含未命中的负缓存），
-    // 失败的块不写任何缓存，留待下次重试
-    for (chunk in uncached.chunked(FINGERPRINT_BATCH_SIZE)) {
-        val fetched = try {
-            when (platform) {
-                Platform.MODRINTH -> getModrinthVersBySha1(chunk.map { it.sha1 })
-                Platform.CURSEFORGE ->
-                    getCFFilesByFingerprints(chunk.map { it.murmur2 }).mapKeys { it.key.toString() }
-            }
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Throwable) {
-            complete = false
-            Logger.warning(TAG, "Failed to match installed mods on platform: $platform", e)
-            null
-        } ?: continue
-
-        for (print in chunk) {
-            val installed = fetched[print.fingerprintValue(platform)]?.toInstalledMod() ?: notFoundMod(platform)
-            cache.encode(print.cacheKey(platform), installed, MMKV.ExpireInDay)
-            collect(installed)
+    mutex.withLock {
+        for (print in fingerprints) {
+            val cached = cache.decodeParcelable(print.cacheKey(platform), InstalledMod::class.java)
+            if (cached != null) collect(cached) else uncached.add(print)
         }
         flush()
     }
 
-    return MatchedInstalledMods(byProject, byVersion, complete)
+    // 并发进行批量查询（上限[MATCH_PARALLELISM]），每批取回后立即持久化并增量上报；
+    // 失败的批次不写任何缓存，留待下次重试
+    coroutineScope {
+        val semaphore = Semaphore(MATCH_PARALLELISM)
+        uncached.chunked(MATCH_BATCH_SIZE).map { chunk ->
+            async {
+                semaphore.withPermit {
+                    val fetched = try {
+                        when (platform) {
+                            Platform.MODRINTH -> getModrinthVersBySha1(chunk.map { it.sha1 })
+                            Platform.CURSEFORGE ->
+                                getCFFilesByFingerprints(chunk.map { it.murmur2 }).mapKeys { it.key.toString() }
+                        }
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Throwable) {
+                        Logger.warning(TAG, "Failed to match installed mods on platform: $platform", e)
+                        null
+                    }
+
+                    mutex.withLock {
+                        if (fetched == null) {
+                            complete = false
+                        } else {
+                            for (print in chunk) {
+                                val installed = fetched[print.fingerprintValue(platform)]?.toInstalledMod()
+                                    ?: notFoundMod(platform)
+                                cache.encode(print.cacheKey(platform), installed, MMKV.ExpireInDay)
+                                collect(installed)
+                            }
+                            flush()
+                        }
+                    }
+                }
+            }
+        }.awaitAll()
+    }
+
+    val isComplete = mutex.withLock { complete }
+    return MatchedInstalledMods(byProject, byVersion, isComplete)
 }
 
 /**
