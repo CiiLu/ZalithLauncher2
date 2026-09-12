@@ -156,7 +156,22 @@ class DownloadModViewModel : ViewModel() {
             return
         }
 
-        val matched = matchInstalledMods(fingerprints, platform)
+        val byProject = mutableMapOf<String, InstalledMod>()
+        val byVersion = mutableMapOf<String, InstalledMod>()
+
+        fun collect(installed: InstalledMod) {
+            if (installed.notFound) return
+            byProject[installed.projectId] = installed
+            byVersion[installed.versionId] = installed
+        }
+
+        //边匹配边同步到UI，匹配到多少显示多少
+        val matched = matchInstalledMods(fingerprints, platform) { incremental ->
+            incremental.byProject.values.forEach(::collect)
+            installedByProject = byProject.toMap()
+            installedByVersion = byVersion.toMap()
+        }
+
         // 存在失败分块时不做会话内缓存，下次切换平台时重试（成功块已有持久缓存兜底）
         if (matched.complete) matchedResults[platform] = matched.byProject to matched.byVersion
         installedByProject = matched.byProject

@@ -78,11 +78,16 @@ suspend fun scanModFingerprints(modsDir: File): List<ModFingerprints> =
 
 /**
  * 将本地模组指纹与指定平台匹配，得到本地已安装的模组信息
- * 优先读取持久缓存，只对未命中的指纹发起批量查询
+ *
+ * 优先读取持久缓存，只对未命中的指纹发起批量查询；
+ * 每匹配到一批结果便通过[onCollect]增量回调，调用方可实时同步到UI
+ *
+ * @param onCollect 增量匹配结果回调，在匹配协程内按顺序依次回调，不会并发
  */
 suspend fun matchInstalledMods(
     fingerprints: List<ModFingerprints>,
-    platform: Platform
+    platform: Platform,
+    onCollect: suspend (MatchedInstalledMods) -> Unit = {}
 ): MatchedInstalledMods {
     val byProject = mutableMapOf<String, InstalledMod>()
     val byVersion = mutableMapOf<String, InstalledMod>()
@@ -91,11 +96,26 @@ suspend fun matchInstalledMods(
     }
 
     var complete = true
+    val pending = mutableListOf<InstalledMod>()
 
     fun collect(installed: InstalledMod) {
         if (installed.notFound) return
         byProject[installed.projectId] = installed
         byVersion[installed.versionId] = installed
+        pending.add(installed)
+    }
+
+    //增量上报已匹配的结果
+    suspend fun flush() {
+        if (pending.isEmpty()) return
+        onCollect(
+            MatchedInstalledMods(
+                byProject = pending.associateBy { it.projectId },
+                byVersion = pending.associateBy { it.versionId },
+                complete = false
+            )
+        )
+        pending.clear()
     }
 
     val cache = installedModCache()
@@ -104,6 +124,7 @@ suspend fun matchInstalledMods(
         val cached = cache.decodeParcelable(print.cacheKey(platform), InstalledMod::class.java)
         if (cached != null) collect(cached) else uncached.add(print)
     }
+    flush()
 
     // 分块批量查询，块内成功时才允许写入持久缓存（含未命中的负缓存），
     // 失败的块不写任何缓存，留待下次重试
@@ -127,6 +148,7 @@ suspend fun matchInstalledMods(
             cache.encode(print.cacheKey(platform), installed, MMKV.ExpireInDay)
             collect(installed)
         }
+        flush()
     }
 
     return MatchedInstalledMods(byProject, byVersion, complete)
