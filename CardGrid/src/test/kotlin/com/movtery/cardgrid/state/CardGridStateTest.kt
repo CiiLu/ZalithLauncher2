@@ -161,6 +161,21 @@ class CardGridStateTest {
     }
 
     @Test
+    fun testReflowSpanGrowthNotEatenByPerStepRounding() {
+        //小跨度卡片在逐级列数变化下跨度增长不应被取整吞噬（否则卡片宽度在超宽屏上停滞）
+        val state = CardGridState(scope)
+        state.updateGeometry(1280f, Density(1f)) // 64 列
+        state.seed(
+            types = listOf(testType),
+            seeds = listOf(CardSeed("A", "test", CardRect("A", 0, 0, 10, 4))),
+            storedColumns = 64
+        )
+        state.updateGeometry(1320f, Density(1f)) // 66 列
+        state.updateGeometry(1360f, Density(1f)) // 68 列
+        assertEquals(CardRect("A", 0, 0, 11, 4), layoutOf(state, "A"))
+    }
+
+    @Test
     fun testAddCardBeforeGeometryReadySkipsPersistence() {
         val state = CardGridState(scope)
         var committed = false
@@ -268,8 +283,7 @@ class CardGridStateTest {
     }
 
     @Test
-    fun testResizeBlockedByCardAtEdgeKeepsOriginal() {
-        val state = seededState(
+    fun testResizeBlockedByCardAtEdgeKeepsOriginal() {        val state = seededState(
             CardRect("A", 0, 0, 4, 4),
             CardRect("B", 4, 0, 6, 4)
         )

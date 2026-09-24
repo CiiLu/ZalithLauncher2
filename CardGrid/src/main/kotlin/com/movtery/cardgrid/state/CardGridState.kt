@@ -58,7 +58,16 @@ import kotlin.math.roundToInt
 data class GridCard(
     val id: String,
     val type: CardType,
-    val layout: CardRect
+    val layout: CardRect,
+    /** 跨度折算基准（用户结算时的跨度与列数），窗口列数变化时自基准无损折算 */
+    val reflowBase: ReflowBase? = null
+)
+
+/** 卡片跨度的重排基准 */
+data class ReflowBase(
+    val width: Int,
+    val height: Int,
+    val columns: Int
 )
 
 /** 待播种的持久化卡片布局，[typeId] 须能在播种的类型表中找到 */
@@ -242,7 +251,14 @@ class CardGridState internal constructor(
 
         val materialized = pending.mapNotNull { seed ->
             typeById[seed.typeId]?.let { type ->
-                GridCard(id = seed.id, type = type, layout = layouts.getValue(seed.id))
+                val layout = layouts.getValue(seed.id)
+                //折算基准取持久化跨度与存储列数，存储列数未知时以当前几何为基准
+                val base = if (pendingColumns > 0) {
+                    ReflowBase(seed.layout.width, seed.layout.height, pendingColumns)
+                } else {
+                    ReflowBase(layout.width, layout.height, newColumns)
+                }
+                GridCard(id = seed.id, type = type, layout = layout, reflowBase = base)
             }
         }
         //播种布局以持久化数据为准，替换几何就绪前先行补位加入的同 id 卡片，避免重复
@@ -309,7 +325,8 @@ class CardGridState internal constructor(
         val card = GridCard(
             id = id,
             type = type,
-            layout = CardRect(id = id, x = slot.x, y = slot.y, width = width, height = height)
+            layout = CardRect(id = id, x = slot.x, y = slot.y, width = width, height = height),
+            reflowBase = ReflowBase(width, height, geometry.columns)
         )
         cards = cards + card
         commitLayout()
@@ -595,8 +612,16 @@ class CardGridState internal constructor(
             }
         }
         cards = compactCards(cards)
-        // 压实可能改变会话卡的最终落位，以列表中的最终布局为准
+        //压实可能改变会话卡的最终落位，以列表中的最终布局为准
         val finalLayout = cards.firstOrNull { it.id == current.card.id }?.layout ?: target
+        //用户结算的跨度成为新的折算基准
+        cards = cards.map { card ->
+            if (card.id == current.card.id) {
+                card.copy(reflowBase = ReflowBase(card.layout.width, card.layout.height, geometry.columns))
+            } else {
+                card
+            }
+        }
         endSession()
         settleSessionCard(current.card, rawRect, finalLayout)
         cards.filterNot { it.id == current.card.id }
@@ -630,11 +655,26 @@ class CardGridState internal constructor(
         return list.map { card -> card.copy(layout = compacted.getValue(card.id)) }
     }
 
-    /** 列数变化：按阅读顺序重排并持久化 */
     private fun reflowTo(newColumns: Int, oldColumns: Int) {
+        //跨度自基准一次性折算，避免逐级取整把小幅增长吞噬成固定跨度
+        val respanned = cards.map { card ->
+            val base = card.reflowBase
+            if (base == null) {
+                card.layout
+            } else {
+                val lim = card.type.limits.clampedFor(newColumns)
+                card.layout.copy(
+                    width = (base.width * newColumns.toFloat() / base.columns).roundToInt()
+                        .let(lim::clampWidth),
+                    height = (base.height * newColumns.toFloat() / base.columns).roundToInt()
+                        .let(lim::clampHeight)
+                )
+            }
+        }
+        //跨度已折算完毕，oldColumns 传同值使重排只做位置打包
         val layouts = GridEngine.reflow(
-            cards = layouts(),
-            oldColumns = oldColumns,
+            cards = respanned,
+            oldColumns = newColumns,
             columns = newColumns
         ) { rect -> cards.firstOrNull { it.id == rect.id }?.type?.limits ?: CardLimits.DEFAULT }
             .associateBy { it.id }
