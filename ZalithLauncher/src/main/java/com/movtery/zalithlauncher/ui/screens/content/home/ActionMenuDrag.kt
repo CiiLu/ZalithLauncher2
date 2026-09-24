@@ -25,6 +25,7 @@ import androidx.compose.animation.core.animate
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -36,8 +37,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import com.movtery.zalithlauncher.setting.enums.ActionMenuSide
@@ -55,6 +58,18 @@ interface ActionMenuDragHandler {
     fun onDrag(position: Offset)
     fun onDragEnd()
     fun onDragCancel()
+
+    /** 登记自行处理长按的内部区域 */
+    fun addExclusion(exclusion: ActionMenuDragExclusion)
+    /** 移除已登记的内部区域 */
+    fun removeExclusion(exclusion: ActionMenuDragExclusion)
+}
+
+/**
+ * 自行处理长按的内部区域（根坐标系矩形，随布局更新）
+ */
+class ActionMenuDragExclusion {
+    internal var bounds: Rect? = null
 }
 
 /**
@@ -87,6 +102,24 @@ fun Modifier.actionMenuDragAnchor(): Modifier {
                 }
             )
         }
+}
+
+/**
+ * 声明该元素区域自行处理长按
+ */
+@Composable
+fun Modifier.actionMenuDragExclusion(): Modifier {
+    val handler = LocalActionMenuDrag.current ?: return this
+    val exclusion = remember { ActionMenuDragExclusion() }
+    DisposableEffect(handler) {
+        handler.addExclusion(exclusion)
+        onDispose {
+            handler.removeExclusion(exclusion)
+        }
+    }
+    return this.onGloballyPositioned { coordinates ->
+        exclusion.bounds = if (coordinates.isAttached) coordinates.boundsInRoot() else null
+    }
 }
 
 /**
@@ -163,6 +196,8 @@ class ActionMenuDragState(
     private var fingerAtGrab = Offset.Zero
     private var cardPositionAtGrab = Offset.Zero
 
+    private val exclusions = mutableListOf<ActionMenuDragExclusion>()
+
     /**
      * 已停泊侧（持久化状态）
      */
@@ -202,7 +237,18 @@ class ActionMenuDragState(
         return Offset(x, outerPaddingPx)
     }
 
+    override fun addExclusion(exclusion: ActionMenuDragExclusion) {
+        exclusions.add(exclusion)
+    }
+
+    override fun removeExclusion(exclusion: ActionMenuDragExclusion) {
+        exclusions.remove(exclusion)
+    }
+
     override fun onDragStart(position: Offset) {
+        //落点位于自行处理长按的内部区域时不接管，避免与内部长按手势同时触发
+        if (exclusions.any { it.bounds?.contains(position) == true }) return
+
         settleJob?.cancel()
         fingerAtGrab = position - parentOrigin
         //以当前渲染位置（停泊位叠加进行中的归位偏移）为基准，提起瞬间不产生位移

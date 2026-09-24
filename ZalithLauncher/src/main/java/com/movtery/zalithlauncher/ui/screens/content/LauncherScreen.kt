@@ -91,6 +91,7 @@ import com.movtery.zalithlauncher.ui.screens.content.elements.VersionIconImage
 import com.movtery.zalithlauncher.ui.screens.content.home.HomeGrid
 import com.movtery.zalithlauncher.ui.screens.content.home.LocalActionMenuDrag
 import com.movtery.zalithlauncher.ui.screens.content.home.actionMenuDragAnchor
+import com.movtery.zalithlauncher.ui.screens.content.home.actionMenuDragExclusion
 import com.movtery.zalithlauncher.ui.screens.content.home.rememberActionMenuDragState
 import com.movtery.zalithlauncher.ui.screens.content.home.version.LocalHomeCardLauncher
 import com.movtery.zalithlauncher.ui.screens.content.home.version.LocalHomeCardVersionSettings
@@ -457,6 +458,7 @@ private fun VersionManagerLayout(
 ) {
     Row(
         modifier = modifier
+            .actionMenuDragExclusion()
             .clip(shape = MaterialTheme.shapes.large)
             .combinedClickable(
                 role = Role.Button,
