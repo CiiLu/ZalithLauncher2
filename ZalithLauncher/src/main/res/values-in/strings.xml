@@ -1406,4 +1406,7 @@
     <string name="favorites_item_unavailable">Tidak Tersedia</string>
     <string name="favorites_sort_follow_time">Berdasarkan Waktu</string>
     <string name="favorites_sort_title">Nama Project</string>
+    <string name="home_add_version_card">Tambahkan Kartu ke Layar Utama</string>
+    <string name="home_version_card_deleted">Versi Dihapus</string>
+    <string name="home_version_card_inaccessible">Direktori Game Tidak Bisa Diakses</string>
 </resources>
