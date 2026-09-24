@@ -19,13 +19,13 @@
 package com.movtery.zalithlauncher.ui.screens.content
 
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,7 +36,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -74,7 +73,9 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.movtery.cardgrid.state.rememberCardGridState
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.game.account.Account
 import com.movtery.zalithlauncher.game.account.AccountsManager
+import com.movtery.zalithlauncher.game.account.getAccountTypeName
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.setting.AllSettings
@@ -85,12 +86,13 @@ import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.components.ScalingActionButton
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
-import com.movtery.zalithlauncher.ui.screens.content.elements.AccountAvatar
 import com.movtery.zalithlauncher.ui.screens.content.elements.CommonVersionInfoLayout
+import com.movtery.zalithlauncher.ui.screens.content.elements.PlayerFace
 import com.movtery.zalithlauncher.ui.screens.content.elements.VersionIconImage
 import com.movtery.zalithlauncher.ui.screens.content.home.HomeGrid
 import com.movtery.zalithlauncher.ui.screens.content.home.LocalActionMenuDrag
 import com.movtery.zalithlauncher.ui.screens.content.home.actionMenuDragAnchor
+import com.movtery.zalithlauncher.ui.screens.content.home.actionMenuDragExclusion
 import com.movtery.zalithlauncher.ui.screens.content.home.rememberActionMenuDragState
 import com.movtery.zalithlauncher.ui.screens.content.home.version.LocalHomeCardLauncher
 import com.movtery.zalithlauncher.ui.screens.content.home.version.LocalHomeCardVersionSettings
@@ -198,6 +200,7 @@ fun LauncherScreen(
                 }
             }
 
+            val isActionMenuTaller = maxHeight >= 600.dp
             CompositionLocalProvider(LocalActionMenuDrag provides dragState) {
                 Box(
                     modifier = Modifier
@@ -215,6 +218,7 @@ fun LauncherScreen(
                     ActionMenu(
                         modifier = Modifier.fillMaxSize(),
                         isVisible = isVisible,
+                        isTaller = isActionMenuTaller,
                         onLaunchGame = onLaunchGame,
                         swapTargetValue = if (dockedSide == ActionMenuSide.END) 40.dp else (-40).dp,
                         pickUpScale = { dragState.scale },
@@ -254,49 +258,71 @@ private fun ContentMenu(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ActionMenuContent(
+private fun AccountAvatarCenter(
     modifier: Modifier = Modifier,
+    account: Account?,
+    refreshKey: Any? = null,
+    onClick: () -> Unit = {}
+) {
+    Box(
+        modifier = modifier
+            .actionMenuDragExclusion()
+            .clip(shape = MaterialTheme.shapes.extraLarge)
+            .clickable(onClick = onClick)
+    ) {
+        Column(
+            modifier = Modifier.padding(all = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (account != null) {
+                PlayerFace(
+                    account = account,
+                    avatarSize = 64.dp,
+                    refreshKey = refreshKey
+                )
+            } else {
+                Icon(
+                    modifier = Modifier.size(40.dp),
+                    painter = painterResource(R.drawable.ic_add),
+                    contentDescription = null
+                )
+            }
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = account?.username ?: stringResource(R.string.account_add_new_account),
+                    maxLines = 1,
+                    style = MaterialTheme.typography.titleSmall
+                )
+                if (account != null) {
+                    Text(
+                        text = getAccountTypeName(account),
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun VersionsContent(
     onLaunchGame: (Version?) -> Unit,
-    toAccountManageScreen: () -> Unit,
     toVersionManageScreen: () -> Unit,
     toVersionSettingsScreen: () -> Unit,
-    launchButton: @Composable (
-        innerModifier: Modifier,
-        onClick: () -> Unit,
-        text: @Composable RowScope.() -> Unit
-    ) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val account by AccountsManager.currentAccountFlow.collectAsStateWithLifecycle()
     val version by VersionsManager.currentVersion.collectAsStateWithLifecycle()
     val isRefreshing by VersionsManager.isRefreshing.collectAsStateWithLifecycle()
 
-    ConstraintLayout(
-        modifier = modifier
-    ) {
-        val (accountAvatar, versionManagerLayout, launchButton) = createRefs()
-
-        AccountAvatar(
-            modifier = Modifier
-                .constrainAs(accountAvatar) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(launchButton.top, margin = 32.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                },
-            account = account,
-            onClick = toAccountManageScreen
-        )
-
-        var showList by remember { mutableStateOf(false) }
-        var versionManagerRow by remember { mutableStateOf<LayoutCoordinates?>(null) }
+    var showList by remember { mutableStateOf(false) }
+    var versionManagerRow by remember { mutableStateOf<LayoutCoordinates?>(null) }
+    Column(modifier = modifier) {
         Box(
-            modifier = Modifier.constrainAs(versionManagerLayout) {
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                bottom.linkTo(launchButton.top)
-            },
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -321,7 +347,9 @@ private fun ActionMenuContent(
                 }
                 version?.takeIf { !isRefreshing && it.isValid() }?.let {
                     IconButton(
-                        modifier = Modifier.padding(end = 8.dp),
+                        modifier = Modifier
+                            .actionMenuDragExclusion()
+                            .padding(end = 8.dp),
                         onClick = toVersionSettingsScreen
                     ) {
                         Icon(
@@ -384,17 +412,17 @@ private fun ActionMenuContent(
             }
         }
 
-        launchButton(
-            Modifier
+        ScalingActionButton(
+            modifier = Modifier
+                .actionMenuDragExclusion()
                 .fillMaxWidth()
-                .constrainAs(launchButton) {
-                    bottom.linkTo(parent.bottom, margin = 8.dp)
-                }
-                .padding(PaddingValues(horizontal = 12.dp)),
-            {
+                .padding(PaddingValues(horizontal = 12.dp))
+                .padding(bottom = 8.dp),
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 1.dp),
+            onClick = {
                 onLaunchGame(null)
             },
-            {
+            content = {
                 MarqueeText(text = stringResource(R.string.main_launch_game))
             }
         )
@@ -402,8 +430,56 @@ private fun ActionMenuContent(
 }
 
 @Composable
+private fun ActionMenuCardContent(
+    modifier: Modifier = Modifier,
+    onLaunchGame: (Version?) -> Unit,
+    toAccountManageScreen: () -> Unit,
+    toVersionManageScreen: () -> Unit,
+    toVersionSettingsScreen: () -> Unit,
+) {
+    val account by AccountsManager.currentAccountFlow.collectAsStateWithLifecycle()
+
+    BackgroundCard(
+        modifier = Modifier
+            .actionMenuDragAnchor()
+            .then(modifier),
+        shape = MaterialTheme.shapes.extraLarge
+    ) {
+        ConstraintLayout(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            val (accountAvatar, versionManagerLayout) = createRefs()
+
+            AccountAvatarCenter(
+                modifier = Modifier
+                    .constrainAs(accountAvatar) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(versionManagerLayout.top, margin = 32.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                account = account,
+                onClick = toAccountManageScreen
+            )
+
+            VersionsContent(
+                modifier = Modifier.constrainAs(versionManagerLayout) {
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom)
+                },
+                onLaunchGame = onLaunchGame,
+                toVersionManageScreen = toVersionManageScreen,
+                toVersionSettingsScreen = toVersionSettingsScreen,
+            )
+        }
+    }
+}
+
+@Composable
 private fun ActionMenu(
     isVisible: Boolean,
+    isTaller: Boolean,
     onLaunchGame: (Version?) -> Unit,
     swapTargetValue: Dp,
     pickUpScale: () -> Float,
@@ -418,32 +494,17 @@ private fun ActionMenu(
         isHorizontal = true
     )
 
-    BackgroundCard(
-        modifier = modifier
-            .actionMenuDragAnchor()
-            .graphicsLayer {
-                val scale = pickUpScale()
-                scaleX = scale
-                scaleY = scale
-            }
-            .offset { IntOffset(x = xOffset.roundToPx(), y = 0) },
-        shape = MaterialTheme.shapes.extraLarge
-    ) {
-        ActionMenuContent(
-            modifier = Modifier.fillMaxSize(),
-            onLaunchGame = onLaunchGame,
-            toAccountManageScreen = toAccountManageScreen,
-            toVersionManageScreen = toVersionManageScreen,
-            toVersionSettingsScreen = toVersionSettingsScreen
-        ) { innerModifier, onClick, text ->
-            ScalingActionButton(
-                modifier = innerModifier,
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 1.dp),
-                onClick = onClick,
-                content = text
-            )
-        }
-    }
+    ActionMenuCardContent(
+        modifier = modifier.graphicsLayer {
+            val scale = pickUpScale()
+            scaleX = scale
+            scaleY = scale
+        }.offset { IntOffset(x = xOffset.roundToPx(), y = 0) },
+        onLaunchGame = onLaunchGame,
+        toAccountManageScreen = toAccountManageScreen,
+        toVersionManageScreen = toVersionManageScreen,
+        toVersionSettingsScreen = toVersionSettingsScreen,
+    )
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -457,6 +518,7 @@ private fun VersionManagerLayout(
 ) {
     Row(
         modifier = modifier
+            .actionMenuDragExclusion()
             .clip(shape = MaterialTheme.shapes.large)
             .combinedClickable(
                 role = Role.Button,
