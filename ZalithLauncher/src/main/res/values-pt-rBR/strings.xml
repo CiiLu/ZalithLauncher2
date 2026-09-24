@@ -1406,4 +1406,7 @@
     <string name="favorites_item_unavailable">Indisponível</string>
     <string name="favorites_sort_follow_time">Tempo de acompanhamento</string>
     <string name="favorites_sort_title">Nome do Projeto</string>
+    <string name="home_add_version_card">Add a versão na tela inicial</string>
+    <string name="home_version_card_deleted">Versão deletada</string>
+    <string name="home_version_card_inaccessible">Não foi possível acessar o diretório do jogo</string>
 </resources>
