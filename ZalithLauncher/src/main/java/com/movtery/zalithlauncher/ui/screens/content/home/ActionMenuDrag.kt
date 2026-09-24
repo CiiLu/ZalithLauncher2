@@ -193,6 +193,7 @@ class ActionMenuDragState(
     val previewShift = Animatable(0f, Float.VectorConverter)
 
     private var settleJob: Job? = null
+    private var scaleJob: Job? = null
     private var fingerAtGrab = Offset.Zero
     private var cardPositionAtGrab = Offset.Zero
 
@@ -257,13 +258,7 @@ class ActionMenuDragState(
         previewSide = dockedSide
         floating = true
         animatePreviewTo(0f)
-        scope.launch {
-            animate(
-                initialValue = scale,
-                targetValue = PickUpScale,
-                animationSpec = scaleSpec
-            ) { value, _ -> scale = value }
-        }
+        animateScaleTo(PickUpScale)
     }
 
     override fun onDrag(position: Offset) {
@@ -312,16 +307,19 @@ class ActionMenuDragState(
             settleOffset.snapTo(releasePosition - landingOf(target))
             previewSide = null
             floating = false
-            launch {
-                animate(
-                    initialValue = scale,
-                    targetValue = 1f,
-                    animationSpec = scaleSpec
-                ) { value, _ ->
-                    scale = value
-                }
-            }
+            launch { animateScaleTo(1f) }
             settleOffset.animateTo(Offset.Zero, settleSpec)
+        }
+    }
+
+    private fun animateScaleTo(target: Float) {
+        scaleJob?.cancel()
+        scaleJob = scope.launch {
+            animate(
+                initialValue = scale,
+                targetValue = target,
+                animationSpec = scaleSpec
+            ) { value, _ -> scale = value }
         }
     }
 

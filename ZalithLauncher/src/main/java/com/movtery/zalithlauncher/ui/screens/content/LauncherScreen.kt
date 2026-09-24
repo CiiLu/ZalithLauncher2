@@ -267,7 +267,6 @@ private fun AccountAvatarCenter(
 ) {
     Box(
         modifier = modifier
-            .actionMenuDragExclusion()
             .clip(shape = MaterialTheme.shapes.extraLarge)
             .clickable(onClick = onClick)
     ) {
@@ -347,9 +346,7 @@ private fun VersionsContent(
                 }
                 version?.takeIf { !isRefreshing && it.isValid() }?.let {
                     IconButton(
-                        modifier = Modifier
-                            .actionMenuDragExclusion()
-                            .padding(end = 8.dp),
+                        modifier = Modifier.padding(end = 8.dp),
                         onClick = toVersionSettingsScreen
                     ) {
                         Icon(
@@ -414,7 +411,6 @@ private fun VersionsContent(
 
         ScalingActionButton(
             modifier = Modifier
-                .actionMenuDragExclusion()
                 .fillMaxWidth()
                 .padding(PaddingValues(horizontal = 12.dp))
                 .padding(bottom = 8.dp),
@@ -454,7 +450,7 @@ private fun ActionMenuCardContent(
                 modifier = Modifier
                     .constrainAs(accountAvatar) {
                         top.linkTo(parent.top)
-                        bottom.linkTo(versionManagerLayout.top, margin = 32.dp)
+                        bottom.linkTo(versionManagerLayout.top)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     },
