@@ -257,57 +257,6 @@ sealed interface OtherLoginOperation {
 }
 
 @Composable
-fun AccountAvatar(
-    modifier: Modifier = Modifier,
-    account: Account?,
-    avatarSize: Dp = 64.dp,
-    refreshKey: Any? = null,
-    onClick: () -> Unit = {}
-) {
-    Box(
-        modifier = modifier
-            .clip(shape = MaterialTheme.shapes.extraLarge)
-            .clickable(onClick = onClick)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(all = 12.dp)
-        ) {
-            if (account != null) {
-                PlayerFace(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    account = account,
-                    avatarSize = avatarSize,
-                    refreshKey = refreshKey
-                )
-            } else {
-                Icon(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .align(Alignment.CenterHorizontally),
-                    painter = painterResource(R.drawable.ic_add),
-                    contentDescription = null
-                )
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = account?.username ?: stringResource(R.string.account_add_new_account),
-                maxLines = 1,
-                style = MaterialTheme.typography.titleSmall
-            )
-            if (account != null) {
-                Text(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    text = getAccountTypeName(account),
-                    style = MaterialTheme.typography.labelSmall
-                )
-            }
-        }
-    }
-}
-
-@Composable
 fun PlayerFace(
     modifier: Modifier = Modifier,
     account: Account,
