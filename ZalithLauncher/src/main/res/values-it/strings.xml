@@ -178,4 +178,13 @@
     <string name="settings_renderer_resolution_custom_summary">Renderizza il gioco a una larghezza e altezza esatte; l\'immagine viene ridimensionata per adattarsi allo schermo</string>
     <string name="settings_renderer_resolution_custom_width">Larghezza</string>
     <string name="settings_renderer_resolution_custom_height">Altezza</string>
+
+    <string name="guide_main_welcome_title">Benvenuto in %s!</string>
+    <string name="guide_main_welcome_text">Diamo una rapida occhiata alle funzioni della schermata principale.</string>
+    <string name="guide_main_account">Tocca qui per aprire la gestione degli account, dove puoi aggiungere o gestire i tuoi account Minecraft</string>
+    <string name="guide_main_version_list">Tocca qui per aprire l\'elenco delle versioni: tutte le versioni del gioco che installerai saranno elencate qui</string>
+    <string name="guide_main_card_drag_title">Non ti piace la posizione del menu azioni?</string>
+    <string name="guide_main_card_drag_text">Tieni premuta la scheda per sollevarla, poi trascinala e rilasciala per ancorarla sul lato opposto</string>
+    <string name="guide_main_card_tip_title">Qui sembra un po\' vuoto?</string>
+    <string name="guide_main_card_tip_text">Non preoccuparti: puoi fissare i contenuti qui come schede e disporli liberamente, purché offra l\'opzione “%s”</string>
 </resources>

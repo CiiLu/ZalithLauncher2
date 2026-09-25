@@ -72,6 +72,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.movtery.cardgrid.state.rememberCardGridState
+import com.movtery.guide.GuideSide
+import com.movtery.guide.guideNode
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.account.Account
 import com.movtery.zalithlauncher.game.account.AccountsManager
@@ -84,6 +86,7 @@ import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.components.ScalingActionButton
+import com.movtery.zalithlauncher.ui.guide.GuideKeys
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.content.elements.CommonVersionInfoLayout
@@ -114,7 +117,13 @@ fun LauncherScreen(
     navigateToVersions: (Version) -> Unit,
     onLaunchGame: (Version?) -> Unit,
     onOpenLink: (String) -> Unit,
+    startGuideOnce: (GuideKeys.Keys) -> Unit,
 ) {
+    LaunchedEffect(Unit) {
+        //发起新手引导
+        startGuideOnce(GuideKeys.Main)
+    }
+
     BaseScreen(
         screenKey = NormalNavKey.LauncherMain,
         currentKey = backStackViewModel.mainScreen.currentKey
@@ -184,6 +193,7 @@ fun LauncherScreen(
                 ) {
                     ContentMenu(
                         modifier = Modifier
+                            .guideNode(GuideKeys.Main.Step.CardTip)
                             .weight(ContentWeight)
                             .offset { IntOffset(x = dragState.previewShift.value.roundToInt(), y = 0) },
                         isVisible = isVisible,
@@ -438,6 +448,7 @@ private fun ActionMenuCardContent(
     BackgroundCard(
         modifier = Modifier
             .actionMenuDragAnchor()
+            .guideNode(GuideKeys.Main.Step.CardDrag)
             .then(modifier),
         shape = MaterialTheme.shapes.extraLarge
     ) {
@@ -453,7 +464,10 @@ private fun ActionMenuCardContent(
                         bottom.linkTo(versionManagerLayout.top)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                    },
+                    }.guideNode(
+                        key = GuideKeys.Main.Step.Account,
+                        preferSide = GuideSide.Below
+                    ),
                 account = account,
                 onClick = toAccountManageScreen
             )
@@ -522,8 +536,10 @@ private fun VersionManagerLayout(
                 onLongClick = {
                     if (version != null) openListMenu()
                 }
-            )
-            .padding(PaddingValues(all = 8.dp))
+            ).guideNode(
+                key = GuideKeys.Main.Step.VersionList,
+                preferSide = GuideSide.Above,
+            ).padding(PaddingValues(all = 8.dp))
     ) {
         if (isRefreshing) {
             Box(modifier = Modifier.fillMaxWidth()) {

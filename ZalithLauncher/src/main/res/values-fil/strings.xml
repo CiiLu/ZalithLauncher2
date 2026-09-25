@@ -255,4 +255,13 @@
     <string name="settings_renderer_resolution_custom_summary">I-render ang game gamit ang eksaktong lapad at taas; isescale ang larawan para umangkop sa screen</string>
     <string name="settings_renderer_resolution_custom_width">Lapad</string>
     <string name="settings_renderer_resolution_custom_height">Taas</string>
+
+    <string name="guide_main_welcome_title">Maligayang pagdating sa %s!</string>
+    <string name="guide_main_welcome_text">Tingnan natin nang mabilis ang mga feature ng main screen.</string>
+    <string name="guide_main_account">I-tap dito para buksan ang account manager, kung saan maaari mong idagdag o ipamahala ang mga Minecraft account</string>
+    <string name="guide_main_version_list">I-tap dito para buksan ang listahan ng bersyon, doon makikita ang lahat ng game version na iyong i-install</string>
+    <string name="guide_main_card_drag_title">Ayaw mo ba ang lokasyon ng action menu?</string>
+    <string name="guide_main_card_drag_text">Pindutin nang matagal ang card para itaas ito, saka i-drag at i-drop para ilagay sa kabilang gilid</string>
+    <string name="guide_main_card_tip_title">Mukhang medyo walang laman dito?</string>
+    <string name="guide_main_card_tip_text">Huwag mag-alala, maaari mong i-pin ang mga nilalaman dito bilang card at ayusin ang mga ito nang malaya, kapag mayroon itong “%s” na opsyon</string>
 </resources>

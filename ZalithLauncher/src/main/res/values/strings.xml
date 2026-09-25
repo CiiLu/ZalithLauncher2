@@ -1464,4 +1464,25 @@
     <string name="fm_property_folders">Folders</string>
     <string name="fm_calculating">Calculating…</string>
     <string name="fm_name_conflict">Name conflicts with an existing entry</string>
+    <!-- Guide -->
+    <!--
+        Texts of the main-screen onboarding guide. The guide dims the whole screen,
+        spotlights the referenced component and shows a text card near it.
+    -->
+    <!-- Welcome card shown centered on the screen at the very start of the main-screen guide; %s is the launcher name -->
+    <string name="guide_main_welcome_title">Welcome to %s!</string>
+    <!-- Second line of the centered welcome card that opens the main-screen guide -->
+    <string name="guide_main_welcome_text">Let\'s take a quick look at what the main screen can do.</string>
+    <!-- Guide text next to the account avatar on the action menu card; tapping it opens the account manager -->
+    <string name="guide_main_account">Tap here to open the account manager, where you can add or manage your Minecraft accounts</string>
+    <!-- Guide text next to the version entry on the action menu card; tapping it opens the version list -->
+    <string name="guide_main_version_list">Tap here to open the version list, where every game version you install will be listed</string>
+    <!-- Title of the guide card for the draggable action menu card -->
+    <string name="guide_main_card_drag_title">Not happy with where the action menu is?</string>
+    <!-- Body of the guide card explaining how to move the action menu card to the other side -->
+    <string name="guide_main_card_drag_text">Long-press the card to pick it up, then drag and drop it to dock on the other side</string>
+    <!-- Title of the guide card suggesting to pin content onto the main screen as cards -->
+    <string name="guide_main_card_tip_title">Looking a bit empty here?</string>
+    <!-- Body of the guide card about pinning contents as cards on the main screen; %s is the name of the pin-to-home option -->
+    <string name="guide_main_card_tip_text">Don\'t worry! You can pin content here as cards and arrange it freely, as long as it provides the “%s” option</string>
 </resources>

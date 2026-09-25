@@ -1014,4 +1014,13 @@
     <string name="crash_link_share_failed_link_not_found">No se encontró un enlace disponible. Por favor, inténtelo de nuevo más tarde.</string>
     <string name="error_bad_request">(%s) El servidor no pudo entender la petición</string>
     <string name="error_forbidden">(%s) No tienes permisos para acceder a este recurso</string>
+
+    <string name="guide_main_welcome_title">¡Bienvenido a %s!</string>
+    <string name="guide_main_welcome_text">Echemos un vistazo rápido a las funciones de la pantalla principal.</string>
+    <string name="guide_main_account">Toca aquí para abrir la gestión de cuentas, donde puedes agregar o administrar tus cuentas de Minecraft</string>
+    <string name="guide_main_version_list">Toca aquí para abrir la lista de versiones: todas las versiones del juego que instales se mostrarán aquí</string>
+    <string name="guide_main_card_drag_title">¿No te gusta dónde está el menú de acciones?</string>
+    <string name="guide_main_card_drag_text">Mantén pulsada la tarjeta para levantarla, arrástrala y suéltala para acoplarla en el otro lado</string>
+    <string name="guide_main_card_tip_title">¿Se ve un poco vacío aquí?</string>
+    <string name="guide_main_card_tip_text">No te preocupes: puedes fijar contenido aquí como tarjetas y organizarlas libremente, siempre que ofrezca la opción “%s”</string>
 </resources>

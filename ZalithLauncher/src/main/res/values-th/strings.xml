@@ -383,4 +383,13 @@
     <string name="settings_renderer_resolution_custom_summary">เรนเดอร์เกมด้วยความกว้างและความสูงที่แน่นอน โดยภาพจะถูกปรับขนาดให้พอดีกับหน้าจอ</string>
     <string name="settings_renderer_resolution_custom_width">ความกว้าง</string>
     <string name="settings_renderer_resolution_custom_height">ความสูง</string>
+
+    <string name="guide_main_welcome_title">ยินดีต้อนรับสู่ %s!</string>
+    <string name="guide_main_welcome_text">มาดูฟีเจอร์ของหน้าหลักกันสั้น ๆ นะ</string>
+    <string name="guide_main_account">แตะตรงนี้เพื่อเปิดหน้าจัดการบัญชี คุณสามารถเพิ่มหรือจัดการบัญชี Minecraft ได้</string>
+    <string name="guide_main_version_list">แตะตรงนี้เพื่อเปิดรายการเวอร์ชัน ทุกเวอร์ชันของเกมที่คุณติดตั้งจะแสดงอยู่ที่นี่</string>
+    <string name="guide_main_card_drag_title">ไม่ชอบตำแหน่งของแถบเมนูใช่ไหม</string>
+    <string name="guide_main_card_drag_text">กดค้างที่การ์ดเพื่อยกขึ้น แล้วลากไปวางเพื่อหยุดพักที่อีกฝั่งได้เลย</string>
+    <string name="guide_main_card_tip_title">รู้สึกว่าตรงนี้ว่างเปล่าไปหน่อยใช่ไหม</string>
+    <string name="guide_main_card_tip_text">ไม่ต้องกังวล คุณสามารถปักเนื้อหาไว้ที่นี่เป็นการ์ดและจัดวางได้อย่างอิสระ หากมีตัวเลือก “%s”</string>
 </resources>

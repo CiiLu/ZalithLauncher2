@@ -1004,4 +1004,13 @@
     <string name="control_editor_edit_style_config_delete">정말 컨트롤 외관 \'%s\'을(를) 삭제하시겠습니까?</string>
     <string name="about_acknowledgements_pojav_text">%s은(는) PojavLauncher의 실행 백엔드를 사용합니다</string>
     <string name="vibrate_kind_one_shot">상수</string>
+
+    <string name="guide_main_welcome_title">%s에 오신 것을 환영합니다!</string>
+    <string name="guide_main_welcome_text">메인 화면의 기능을 간단히 살펴볼게요.</string>
+    <string name="guide_main_account">여기를 눌러 계정 관리 화면을 여세요. Minecraft 계정을 추가하거나 관리할 수 있습니다</string>
+    <string name="guide_main_version_list">여기를 눌러 버전 목록을 열어 보세요. 설치한 모든 게임 버전이 여기에 표시됩니다</string>
+    <string name="guide_main_card_drag_title">작업 메뉴 위치가 마음에 들지 않으신가요?</string>
+    <string name="guide_main_card_drag_text">카드를 길게 눌러 들어올린 뒤, 드래그해서 반대쪽에 놓을 수 있어요</string>
+    <string name="guide_main_card_tip_title">여기가 좀 텅 빈 것 같나요?</string>
+    <string name="guide_main_card_tip_text">걱정 마세요. “%s” 옵션이 있는 콘텐츠는 카드로 여기에 자유롭게 배치할 수 있어요</string>
 </resources>

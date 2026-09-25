@@ -1,3 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="guide_main_welcome_title">Tere tulemast rakendusse %s!</string>
+    <string name="guide_main_welcome_text">Vaadake lühidalt üle peaekraani funktsioonid.</string>
+    <string name="guide_main_account">Puudutage siin, et avada kontode haldus, kus saate Minecrafti kontosid lisada või hallata</string>
+    <string name="guide_main_version_list">Puudutage siin, et avada versioonide loend, kus kuvatakse kõik installitud mänguversioonid</string>
+    <string name="guide_main_card_drag_title">Ei meeldi toimingumenüü asukoht?</string>
+    <string name="guide_main_card_drag_text">Vajutage kaardile pikalt, et see üles tõsta, ning lohistage ja pange see teisele küljele</string>
+    <string name="guide_main_card_tip_title">Kas siin on veidi tühi?</string>
+    <string name="guide_main_card_tip_text">Ärge muretsege, saate sisu siia kaartidena kinnitada ja vabalt korraldada, kui see pakub valikut „%s“</string>
 </resources>

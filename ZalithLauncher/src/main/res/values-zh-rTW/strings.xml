@@ -1438,4 +1438,13 @@
     <string name="fm_trash_size">大小：%s</string>
     <string name="fm_trash_sort_deleted">刪除時間</string>
     <string name="fm_trash_title">資源回收筒</string>
+
+    <string name="guide_main_welcome_title">歡迎使用 %s！</string>
+    <string name="guide_main_welcome_text">我們來簡單看看主畫面的功能吧～</string>
+    <string name="guide_main_account">點擊此處可進入帳號管理頁面，你可以新增或管理 Minecraft 帳號</string>
+    <string name="guide_main_version_list">點擊這裡可開啟版本清單，你將來安裝的所有遊戲版本都會在這裡列出來喔</string>
+    <string name="guide_main_card_drag_title">不太喜歡操作選單的位置？</string>
+    <string name="guide_main_card_drag_text">你可以長按卡片提起它，拖曳並讓它停靠到另一側喔</string>
+    <string name="guide_main_card_tip_title">這裡太空曠了？</string>
+    <string name="guide_main_card_tip_text">別擔心，你可以將一些內容作為卡片放到這裡自由排布，只要它提供了「%s」選項</string>
 </resources>

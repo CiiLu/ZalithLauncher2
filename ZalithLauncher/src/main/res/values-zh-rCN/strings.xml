@@ -1444,4 +1444,14 @@
     <string name="fm_property_folders">文件夹数</string>
     <string name="fm_calculating">计算中…</string>
     <string name="fm_name_conflict">与已有条目重名</string>
+
+
+    <string name="guide_main_welcome_title">欢迎使用 %s ！</string>
+    <string name="guide_main_welcome_text">我们来简单看看主界面的功能吧~</string>
+    <string name="guide_main_account">点击此处可进入账号管理页面，你可以添加或管理 Minecraft 账号</string>
+    <string name="guide_main_version_list">点击这里可打开版本列表，你将来安装的所有游戏版本都会在这里列举出来哦</string>
+    <string name="guide_main_card_drag_title">不太喜欢操作栏的位置？</string>
+    <string name="guide_main_card_drag_text">你可以长按卡片提起它，拖动并让它停靠到另一侧哦</string>
+    <string name="guide_main_card_tip_title">这里太空旷了？</string>
+    <string name="guide_main_card_tip_text">别担心，你可以将一些内容作为卡片放到这里来自由排布，只要它提供了“%s”选项</string>
 </resources>

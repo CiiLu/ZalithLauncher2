@@ -529,4 +529,13 @@
     <string name="download_category_favorites">المُفَضَّلَات</string>
     <string name="download_game_version_overwrite">سيتم استبدال الإصدار الحالي: %s</string>
     <string name="account_advanced">الإعدادات المتقدمة</string>
+
+    <string name="guide_main_welcome_title">مرحبًا بك في %s!</string>
+    <string name="guide_main_welcome_text">دعنا نلقي نظرة سريعة على ميزات الشاشة الرئيسية.</string>
+    <string name="guide_main_account">اضغط هنا لفتح إدارة الحسابات، حيث يمكنك إضافة حسابات Minecraft أو إدارتها</string>
+    <string name="guide_main_version_list">اضغط هنا لفتح قائمة الإصدارات، حيث ستُدرج جميع إصدارات اللعبة التي ثبّتها</string>
+    <string name="guide_main_card_drag_title">لا يعجبك موضع قائمة الإجراءات؟</string>
+    <string name="guide_main_card_drag_text">اضغط مطولًا على البطاقة لرفعها، ثم اسحبها وأفلتها لتثبيتها في الجهة الأخرى</string>
+    <string name="guide_main_card_tip_title">يبدو هذا المكان فارغًا قليلًا؟</string>
+    <string name="guide_main_card_tip_text">لا تقلق، يمكنك تثبيت المحتوى هنا كبطاقات وترتيبها بحرية، طالما أنه يوفر خيار “%s”</string>
 </resources>

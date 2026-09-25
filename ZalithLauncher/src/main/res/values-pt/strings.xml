@@ -1197,4 +1197,13 @@
     <string name="settings_gamepad_config_summary">Selecione o mapeamento do gamepad configuração a ser usada</string>
     <string name="versions_export_pack_min_memory">Memória mínima alocada</string>
     <string name="versions_export_pack_max_memory">Memória máxima alocada</string>
+
+    <string name="guide_main_welcome_title">Bem-vindo ao %s!</string>
+    <string name="guide_main_welcome_text">Vamos dar uma vista de olhos rápida às funções do ecrã principal.</string>
+    <string name="guide_main_account">Toque aqui para abrir o gestor de contas, onde pode adicionar ou gerir as suas contas do Minecraft</string>
+    <string name="guide_main_version_list">Toque aqui para abrir a lista de versões, onde todas as versões do jogo que instalar serão listadas</string>
+    <string name="guide_main_card_drag_title">Não gosta de onde o menu de ações está?</string>
+    <string name="guide_main_card_drag_text">Mantenha o cartão premido para o levantar, depois arraste e largue para o encaixar do outro lado</string>
+    <string name="guide_main_card_tip_title">Parece um pouco vazio por aqui?</string>
+    <string name="guide_main_card_tip_text">Não se preocupe, pode fixar conteúdos aqui como cartões e organizá-los livremente, desde que ofereça a opção “%s”</string>
 </resources>
