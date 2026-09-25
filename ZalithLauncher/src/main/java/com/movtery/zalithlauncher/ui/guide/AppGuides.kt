@@ -60,7 +60,7 @@ class AppGuides(
         val started = controller.start()
         if (started) {
             GuideProgress.markPlayed(group)
-            Logger.info(TAG, "Guide started: ${group::class.simpleName}")
+            Logger.info(TAG, "Guide started: ${GuideProgress.keyOf(group)}")
         }
         return started
     }

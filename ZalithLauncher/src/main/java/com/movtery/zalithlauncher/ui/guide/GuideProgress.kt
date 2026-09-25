@@ -30,7 +30,10 @@ object GuideProgress {
         MMKV.MULTI_PROCESS_MODE
     )
 
-    private fun keyOf(group: GuideKeys.Keys) = when (group) {
+    /**
+     * 该组引导的持久化键
+     */
+    fun keyOf(group: GuideKeys.Keys) = when (group) {
         GuideKeys.Main -> "started_Main"
     }
 
