@@ -18,11 +18,13 @@ enum class NodeClickMode {
 
 /**
  * 一个引导步骤：锚点 [key]、推进配置与内容布局
+ * @param isIntro 介绍步骤
  */
 class GuideEntry internal constructor(
     val key: GuideKey,
     val nodeClick: NodeClickMode,
     val advanceOnScrimClick: Boolean,
     val placement: GuidePlacement,
-    val content: @Composable (GuideScope) -> Unit
+    val content: @Composable (GuideScope) -> Unit,
+    internal val isIntro: Boolean = false
 )

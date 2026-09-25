@@ -24,10 +24,10 @@ sealed interface GuideState {
         val anchors: List<Rect>
     ) : GuideState {
         /**
-         * 锚点是否已在屏幕上解析出坐标
+         * 当前步骤是否已可展示内容：介绍步骤即时就绪，锚点步骤待锚点解析
          */
         val isReady: Boolean
-            get() = anchors.isNotEmpty()
+            get() = entry.isIntro || anchors.isNotEmpty()
     }
 
     /**

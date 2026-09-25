@@ -2,6 +2,7 @@ package com.movtery.guide
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -22,6 +23,20 @@ class GuideBuilder internal constructor() {
         content: @Composable (GuideScope) -> Unit
     ) {
         entries += GuideEntry(key, nodeClick, advanceOnScrimClick, placement, content)
+    }
+
+    /**
+     * 声明一个介绍步骤
+     */
+    fun intro(content: @Composable (GuideScope) -> Unit) {
+        entries += GuideEntry(
+            key = object : GuideKey {},
+            nodeClick = NodeClickMode.Intercept,
+            advanceOnScrimClick = true,
+            placement = GuidePlacement.Fixed(Alignment.Center),
+            content = content,
+            isIntro = true
+        )
     }
 }
 

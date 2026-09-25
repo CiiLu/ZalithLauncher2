@@ -1,5 +1,6 @@
 package com.movtery.guide
 
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.dp
 import org.junit.Assert.assertEquals
@@ -21,7 +22,13 @@ class GuideControllerTest {
     private fun controller(vararg keys: GuideKey): GuideController =
         GuideController(
             entries = keys.map { key ->
-                GuideEntry(key, NodeClickMode.Intercept, advanceOnScrimClick = true, placement = GuidePlacement.Auto) { }
+                GuideEntry(
+                    key = key,
+                    nodeClick = NodeClickMode.Intercept,
+                    advanceOnScrimClick = true,
+                    placement = GuidePlacement.Auto,
+                    content = { }
+                )
             },
             colors = GuideColors(),
             holeRadius = 8.dp,
@@ -54,11 +61,11 @@ class GuideControllerTest {
     }
 
     @Test
-    fun `skip 直接结束且可重新启动`() {
+    fun `finish 直接结束且可重新启动`() {
         val flow = controller(K1, K2)
 
         assertTrue(flow.start())
-        flow.skip()
+        flow.finish()
         assertEquals(GuideState.Finished, flow.state.value)
 
         assertTrue(flow.start())
@@ -73,10 +80,10 @@ class GuideControllerTest {
         assertTrue(first.start())
         assertFalse(second.start())
 
-        first.skip()
+        first.finish()
         assertTrue(second.start())
         assertEquals(GuideState.Active(0, second.entries[0], emptyList()), second.state.value)
-        second.skip()
+        second.finish()
     }
 
     @Test
@@ -88,7 +95,7 @@ class GuideControllerTest {
         first.next()
         assertEquals(GuideState.Finished, first.state.value)
         assertTrue(second.start())
-        second.skip()
+        second.finish()
     }
 
     @Test
@@ -111,11 +118,11 @@ class GuideControllerTest {
     }
 
     @Test
-    fun `非激活状态的 next 与 skip 无副作用`() {
+    fun `非激活状态的 next 与 finish 无副作用`() {
         val flow = controller(K1)
         flow.next()
         assertEquals(GuideState.Idle, flow.state.value)
-        flow.skip()
+        flow.finish()
         assertEquals(GuideState.Idle, flow.state.value)
         assertFalse(flow.state.value is GuideState.Active)
     }
@@ -128,5 +135,44 @@ class GuideControllerTest {
         assertFalse(active.isReady)
         flow.updateAnchors(0, anchors)
         assertTrue((flow.state.value as GuideState.Active).isReady)
+    }
+
+    @Test
+    fun `介绍步骤激活即就绪且整流可走完`() {
+        val introEntry = GuideEntry(
+            key = object : GuideKey {},
+            nodeClick = NodeClickMode.Intercept,
+            advanceOnScrimClick = true,
+            placement = GuidePlacement.Fixed(Alignment.Center),
+            content = { },
+            isIntro = true
+        )
+        val flow = GuideController(
+            entries = listOf(
+                introEntry,
+                GuideEntry(
+                    key = K1,
+                    nodeClick = NodeClickMode.Intercept,
+                    advanceOnScrimClick = true,
+                    placement = GuidePlacement.Auto,
+                    content = { }
+                )
+            ),
+            colors = GuideColors(),
+            holeRadius = 8.dp,
+            holeBorderWidth = 0.dp,
+            backBehavior = GuideBack.Block
+        )
+
+        assertTrue(flow.start())
+        val active = flow.state.value as GuideState.Active
+        assertTrue(active.entry.isIntro)
+        assertTrue(active.isReady)
+
+        flow.next()
+        assertFalse((flow.state.value as GuideState.Active).isReady)
+
+        flow.next()
+        assertEquals(GuideState.Finished, flow.state.value)
     }
 }

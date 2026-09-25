@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
@@ -64,11 +65,12 @@ internal fun GuideOverlay(
 
     // 回写锚点，供应用侧通过 GuideState.Active.anchors 观察就绪情况
     LaunchedEffect(state.index, anchors) {
-        controller.updateAnchors(state.index, anchors)
+        // 介绍步骤无锚点，不回写
+        if (!entry.isIntro) controller.updateAnchors(state.index, anchors)
     }
 
     var contentRect by remember { mutableStateOf<Rect?>(null) }
-    val ready = anchors.isNotEmpty()
+    val ready = entry.isIntro || anchors.isNotEmpty()
     // 等待期间不存在引导内容，点击放行区域一并失效
     if (!ready && contentRect != null) contentRect = null
     val density = LocalDensity.current
@@ -88,6 +90,7 @@ internal fun GuideOverlay(
                 radiusPx = radiusPx,
                 borderWidthPx = borderWidthPx,
                 contentRect = contentRect,
+                isIntro = entry.isIntro,
                 nodeClick = entry.nodeClick,
                 advanceOnScrimClick = entry.advanceOnScrimClick,
                 animations = animations,
@@ -122,6 +125,7 @@ private fun Scrim(
     radiusPx: Float,
     borderWidthPx: Float,
     contentRect: Rect?,
+    isIntro: Boolean,
     nodeClick: NodeClickMode,
     advanceOnScrimClick: Boolean,
     animations: GuideAnimations,
@@ -130,6 +134,7 @@ private fun Scrim(
     val currentHoles by rememberUpdatedState(holes)
     val currentReady by rememberUpdatedState(ready)
     val currentContentRect by rememberUpdatedState(contentRect)
+    val currentIsIntro by rememberUpdatedState(isIntro)
     val currentNodeClick by rememberUpdatedState(nodeClick)
     val currentAdvanceOnScrim by rememberUpdatedState(advanceOnScrimClick)
     val currentOnNext by rememberUpdatedState(onNext)
@@ -189,8 +194,8 @@ private fun Scrim(
                     val inContent = currentContentRect?.contains(startPos) == true
 
                     // 引导内容自身与放行模式的锚点只观察不消费，其余一律拦截
-                    val observeOnly = inContent ||
-                            (hole != null && currentNodeClick == NodeClickMode.PassThrough)
+                    val observeOnly = !currentIsIntro && (inContent ||
+                            (hole != null && currentNodeClick == NodeClickMode.PassThrough))
                     if (!observeOnly) down.consume()
 
                     var pressed = true
@@ -215,8 +220,10 @@ private fun Scrim(
                         if (up) pressed = false
                     }
 
-                    if (isTap && !inContent) {
+                    if (isTap) {
                         when {
+                            currentIsIntro -> currentOnNext()
+                            inContent -> Unit
                             hole != null -> currentOnNext()
                             currentAdvanceOnScrim -> currentOnNext()
                         }
@@ -324,9 +331,13 @@ private fun GuideCardContainer(
                 placeables.maxOf { it.height }
             )
             // 锚点未就绪时保持上次求解的位置，仅随 alpha 淡出
-            val solved = if (anchors.isNotEmpty()) {
+            val solved = if (entry.isIntro || anchors.isNotEmpty()) {
                 solvePlacement(
-                    placement = entry.placement,
+                    placement = if (entry.isIntro) {
+                        GuidePlacement.Fixed(Alignment.Center)
+                    } else {
+                        entry.placement
+                    },
                     anchors = anchors,
                     contentSize = contentSize,
                     containerSize = containerSize,
