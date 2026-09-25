@@ -1,6 +1,7 @@
 package com.movtery.guide
 
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableIntStateOf
@@ -44,10 +45,23 @@ internal class GuideRegistry {
         }
     }
 
+    fun updatePreferSide(node: GuideNode, side: GuideSide?) {
+        if (node.preferSide != side) {
+            node.preferSide = side
+            bump()
+        }
+    }
+
     /**
      * 指定 key 的全部锚点边界
      */
     fun rectsFor(key: GuideKey): List<Rect> = nodes[key].orEmpty().map(GuideNode::bounds)
+
+    /**
+     * 指定 key 的方向推荐，仅恰好一个锚点节点声明推荐时生效；多锚点时忽略推荐
+     */
+    fun sideHintFor(key: GuideKey): GuideSide? =
+        nodes[key]?.singleOrNull()?.preferSide
 
     private fun bump() {
         versionState.intValue++
@@ -59,6 +73,7 @@ internal class GuideRegistry {
  */
 internal class GuideNode internal constructor(internal val key: GuideKey) {
     internal var bounds: Rect = Rect.Zero
+    internal var preferSide: GuideSide? = null
 }
 
 /**
@@ -68,14 +83,16 @@ internal val LocalGuideRegistry = compositionLocalOf<GuideRegistry?> { null }
 
 /**
  * 将组件标记为引导锚点；多个组件标记同一个 [key] 时，作为同一步骤的一组锚点
+ * @param preferSide 方向推荐：引导内容优先展示在组件该侧；多锚点或该侧装不下时回落自动求解
  */
-fun Modifier.guideNode(key: GuideKey): Modifier = composed {
+fun Modifier.guideNode(key: GuideKey, preferSide: GuideSide? = null): Modifier = composed {
     val registry = LocalGuideRegistry.current ?: return@composed this
     val node = remember(key) { GuideNode(key) }
     DisposableEffect(key, registry) {
         registry.attach(node)
         onDispose { registry.detach(node) }
     }
+    SideEffect { registry.updatePreferSide(node, preferSide) }
     onGloballyPositioned { coordinates ->
         registry.updateBounds(node, coordinates.boundsInRoot())
     }

@@ -73,6 +73,14 @@ internal fun GuideOverlay(
     val ready = entry.isIntro || anchors.isNotEmpty()
     // 等待期间不存在引导内容，点击放行区域一并失效
     if (!ready && contentRect != null) contentRect = null
+
+    // 方向推荐仅在单锚点时生效，与 entry 摆放策略合成有效策略；介绍步骤固定居中
+    val sideHint = registry.sideHintFor(entry.key)
+    val effectivePlacement = if (entry.isIntro) {
+        GuidePlacement.Fixed(Alignment.Center)
+    } else {
+        resolvePlacement(entry.placement, sideHint, anchors)
+    }
     val density = LocalDensity.current
     val gapPx = with(density) { GuideDefaults.contentGap.toPx() }
     val paddingPx = with(density) { GuideDefaults.screenPadding.toPx() }
@@ -101,6 +109,7 @@ internal fun GuideOverlay(
                 controller = controller,
                 state = state,
                 anchors = anchors,
+                placement = effectivePlacement,
                 visible = ready,
                 fadeAlpha = fadeAlpha,
                 animations = animations,
@@ -254,6 +263,7 @@ private fun GuideCardContainer(
     controller: GuideController,
     state: GuideState.Active,
     anchors: List<Rect>,
+    placement: GuidePlacement,
     visible: Boolean,
     fadeAlpha: Float,
     animations: GuideAnimations,
@@ -333,11 +343,7 @@ private fun GuideCardContainer(
             // 锚点未就绪时保持上次求解的位置，仅随 alpha 淡出
             val solved = if (entry.isIntro || anchors.isNotEmpty()) {
                 solvePlacement(
-                    placement = if (entry.isIntro) {
-                        GuidePlacement.Fixed(Alignment.Center)
-                    } else {
-                        entry.placement
-                    },
+                    placement = placement,
                     anchors = anchors,
                     contentSize = contentSize,
                     containerSize = containerSize,

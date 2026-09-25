@@ -15,14 +15,9 @@ enum class GuideSide {
  */
 sealed class GuidePlacement {
     /**
-     * 自动求解：不遮挡锚点、不出屏为硬约束，可行解中取最靠近屏幕中心者
+     * 自动求解：不遮挡锚点、不出屏为硬约束，可行解中取最靠近锚点包围盒中心者
      */
     data object Auto : GuidePlacement()
-
-    /**
-     * 指定方向偏好，该方向可行时优先采用，否则回落自动求解
-     */
-    data class PreferSide(val side: GuideSide) : GuidePlacement()
 
     /**
      * 完全由对齐方式与偏移决定，不做约束检查
@@ -31,11 +26,10 @@ sealed class GuidePlacement {
         val alignment: Alignment,
         val offset: IntOffset = IntOffset.Zero
     ) : GuidePlacement()
-
-    companion object {
-        val Above: GuidePlacement = PreferSide(GuideSide.Above)
-        val Below: GuidePlacement = PreferSide(GuideSide.Below)
-        val Start: GuidePlacement = PreferSide(GuideSide.Start)
-        val End: GuidePlacement = PreferSide(GuideSide.End)
-    }
 }
+
+/**
+ * 方向偏好：该方向可行时优先采用，否则回落自动求解；
+ * 仅由单锚点节点的方向推荐驱动，不对外暴露
+ */
+internal data class PreferSide(val side: GuideSide) : GuidePlacement()

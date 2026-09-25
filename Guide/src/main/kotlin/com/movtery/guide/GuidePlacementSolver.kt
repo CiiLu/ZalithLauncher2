@@ -36,6 +36,19 @@ internal fun List<Rect>.boundsUnion(): Rect {
 }
 
 /**
+ * 合成有效摆放策略：显式摆放策略优先，其次单锚点节点的方向推荐（映射为方向偏好），无推荐时自动求解
+ */
+internal fun resolvePlacement(
+    placement: GuidePlacement,
+    sideHint: GuideSide?,
+    anchors: List<Rect>
+): GuidePlacement = when {
+    placement !is GuidePlacement.Auto -> placement
+    anchors.size == 1 && sideHint != null -> PreferSide(sideHint)
+    else -> GuidePlacement.Auto
+}
+
+/**
  * 求解引导内容的摆放位置：
  * 以锚点包围盒的中心（多个锚点时即其中心点）为参照，内容尽可能贴近该点；
  * 不遮挡锚点、不出屏为硬约束，可行解中取内容中心距参照点最近者；
@@ -87,7 +100,7 @@ internal fun solvePlacement(
 
     val sides = listOf(GuideSide.Below, GuideSide.Above, GuideSide.Start, GuideSide.End)
     val ordered: List<GuideSide> = when (val p = placement) {
-        is GuidePlacement.PreferSide -> listOf(p.side) + (sides - p.side)
+        is PreferSide -> listOf(p.side) + (sides - p.side)
         else -> sides
     }
 
@@ -104,7 +117,7 @@ internal fun solvePlacement(
     val candidates = ordered.map(::evaluate)
     val feasible = candidates.filter { it.overlap <= 0f && it.out <= 0f }
     val chosen = when {
-        placement is GuidePlacement.PreferSide &&
+        placement is PreferSide &&
                 candidates.first().overlap <= 0f && candidates.first().out <= 0f -> candidates.first()
         feasible.isNotEmpty() -> feasible.minBy { it.distance }
         else -> candidates.minWith(compareBy({ it.overlap }, { it.out }, { it.distance }))

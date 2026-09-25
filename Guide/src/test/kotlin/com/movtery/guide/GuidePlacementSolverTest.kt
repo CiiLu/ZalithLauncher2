@@ -1,5 +1,6 @@
 package com.movtery.guide
 
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -115,7 +116,7 @@ class GuidePlacementSolverTest {
     @Test
     fun `方向偏好可行时优先采用`() {
         val anchor = Rect(440f, 860f, 640f, 1060f)
-        val result = solve(listOf(anchor), placement = GuidePlacement.End)
+        val result = solve(listOf(anchor), placement = PreferSide(GuideSide.End))
 
         assertEquals(GuideSide.End, result.side)
         val rect = result.rect()
@@ -127,7 +128,7 @@ class GuidePlacementSolverTest {
         val anchor = Rect(440f, 860f, 640f, 1060f)
         val result = solve(
             listOf(anchor),
-            placement = GuidePlacement.Fixed(androidx.compose.ui.Alignment.TopStart, IntOffset(10, 20))
+            placement = GuidePlacement.Fixed(Alignment.TopStart, IntOffset(10, 20))
         )
 
         assertEquals(IntOffset(10, 20), result.offset)
@@ -137,12 +138,40 @@ class GuidePlacementSolverTest {
     @Test
     fun `RTL 下 Start 与 End 镜像`() {
         val anchor = Rect(440f, 860f, 640f, 1060f)
-        val start = solve(listOf(anchor), placement = GuidePlacement.Start, layoutDirection = LayoutDirection.Rtl)
-        val end = solve(listOf(anchor), placement = GuidePlacement.End, layoutDirection = LayoutDirection.Rtl)
+        val start = solve(listOf(anchor), placement = PreferSide(GuideSide.Start), layoutDirection = LayoutDirection.Rtl)
+        val end = solve(listOf(anchor), placement = PreferSide(GuideSide.End), layoutDirection = LayoutDirection.Rtl)
 
         // RTL 中 Start 在锚点右侧，End 在锚点左侧
         assertTrue(start.rect().left >= anchor.right + gap - 0.5f)
         assertTrue(end.rect().right <= anchor.left - gap + 0.5f)
+    }
+
+    @Test
+    fun `单锚点节点推荐映射为方向偏好`() {
+        val result = resolvePlacement(GuidePlacement.Auto, GuideSide.Below, listOf(Rect(0f, 0f, 100f, 100f)))
+
+        assertEquals(PreferSide(GuideSide.Below), result)
+    }
+
+    @Test
+    fun `多锚点忽略节点推荐`() {
+        val anchors = listOf(
+            Rect(0f, 0f, 100f, 100f),
+            Rect(200f, 0f, 300f, 100f)
+        )
+
+        assertEquals(GuidePlacement.Auto, resolvePlacement(GuidePlacement.Auto, GuideSide.Below, anchors))
+    }
+
+    @Test
+    fun `显式摆放策略优先于节点推荐`() {
+        val fixed = GuidePlacement.Fixed(Alignment.Center)
+
+        assertEquals(fixed, resolvePlacement(fixed, GuideSide.Below, listOf(Rect(0f, 0f, 100f, 100f))))
+        assertEquals(
+            GuidePlacement.Auto,
+            resolvePlacement(GuidePlacement.Auto, null, listOf(Rect(0f, 0f, 100f, 100f)))
+        )
     }
 
     @Test
