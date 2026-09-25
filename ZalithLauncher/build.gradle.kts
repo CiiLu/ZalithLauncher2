@@ -265,6 +265,7 @@ dependencies {
     implementation(project(":CardGrid"))
     implementation(project(":Terracotta"))
     implementation(project(":InputMap"))
+    implementation(project(":Guide"))
     //Utils
     implementation(libs.bytehook)
     implementation(libs.gson)
