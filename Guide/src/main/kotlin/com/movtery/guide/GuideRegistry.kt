@@ -1,10 +1,14 @@
 package com.movtery.guide
 
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Rect
@@ -17,6 +21,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
  */
 internal class GuideRegistry {
     private val nodes = HashMap<GuideKey, MutableList<GuideNode>>()
+    private val scrollHandlers = mutableListOf<GuideScrollHandler>()
     private val versionState = mutableIntStateOf(0)
 
     /**
@@ -63,10 +68,44 @@ internal class GuideRegistry {
     fun sideHintFor(key: GuideKey): GuideSide? =
         nodes[key]?.singleOrNull()?.preferSide
 
+    /**
+     * 依次询问滚动容器能否定位到该 key 的锚点
+     * @return 是否有容器接管
+     */
+    suspend fun requestScroll(key: GuideKey): Boolean {
+        scrollHandlers.toList().forEach { handler ->
+            if (handler(key)) return true
+        }
+        return false
+    }
+
+    /**
+     * 请求将 key 的锚点带入视口
+     */
+    suspend fun bringIntoView(key: GuideKey) {
+        nodes[key].orEmpty().forEach { node ->
+            node.bringIntoViewRequester.bringIntoView(Rect.Zero)
+        }
+    }
+
+    fun addScrollHandler(handler: GuideScrollHandler) {
+        scrollHandlers.add(handler)
+    }
+
+    fun removeScrollHandler(handler: GuideScrollHandler) {
+        scrollHandlers.remove(handler)
+    }
+
     private fun bump() {
         versionState.intValue++
     }
 }
+
+/**
+ * 滚动容器的锚点定位回调
+ * @return true 表示已处理该 key 的定位
+ */
+internal typealias GuideScrollHandler = suspend (GuideKey) -> Boolean
 
 /**
  * 一个被标记的引导锚点
@@ -74,6 +113,7 @@ internal class GuideRegistry {
 internal class GuideNode internal constructor(internal val key: GuideKey) {
     internal var bounds: Rect = Rect.Zero
     internal var preferSide: GuideSide? = null
+    internal val bringIntoViewRequester = BringIntoViewRequester()
 }
 
 /**
@@ -93,7 +133,24 @@ fun Modifier.guideNode(key: GuideKey, preferSide: GuideSide? = null): Modifier =
         onDispose { registry.detach(node) }
     }
     SideEffect { registry.updatePreferSide(node, preferSide) }
-    onGloballyPositioned { coordinates ->
-        registry.updateBounds(node, coordinates.boundsInRoot())
+    this
+        .bringIntoViewRequester(node.bringIntoViewRequester)
+        .onGloballyPositioned { coordinates ->
+            registry.updateBounds(node, coordinates.boundsInRoot())
+        }
+}
+
+/**
+ * 登记滚动容器的锚点定位能力
+ * 引导步骤的锚点缺失时库会依次询问各容器，[scroll] 返回 true 表示已处理该 key 的定位
+ */
+fun Modifier.guideScrollTo(scroll: suspend (GuideKey) -> Boolean): Modifier = composed {
+    val registry = LocalGuideRegistry.current ?: return@composed this
+    val current by rememberUpdatedState(scroll)
+    DisposableEffect(registry) {
+        val handler: GuideScrollHandler = { key -> current(key) }
+        registry.addScrollHandler(handler)
+        onDispose { registry.removeScrollHandler(handler) }
     }
+    this
 }

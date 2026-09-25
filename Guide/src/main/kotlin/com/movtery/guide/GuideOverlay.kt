@@ -14,6 +14,7 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -38,12 +39,13 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
+import kotlinx.coroutines.delay
 import kotlin.math.abs
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * 激活引导流的覆盖层：解析锚点、绘制遮罩与镂空、裁决点击、展示引导内容。
@@ -69,18 +71,18 @@ internal fun GuideOverlay(
         if (!entry.isIntro) controller.updateAnchors(state.index, anchors)
     }
 
-    var contentRect by remember { mutableStateOf<Rect?>(null) }
-    val ready = entry.isIntro || anchors.isNotEmpty()
-    // 等待期间不存在引导内容，点击放行区域一并失效
-    if (!ready && contentRect != null) contentRect = null
-
-    // 方向推荐仅在单锚点时生效，与 entry 摆放策略合成有效策略；介绍步骤固定居中
-    val sideHint = registry.sideHintFor(entry.key)
-    val effectivePlacement = if (entry.isIntro) {
-        GuidePlacement.Fixed(Alignment.Center)
-    } else {
-        resolvePlacement(entry.placement, sideHint, anchors)
+    // 锚点缺失时，轮询询问容器侧注册的定位能力直到锚点就绪
+    // 容器可能比引导步骤更晚组合，故反复询问
+    LaunchedEffect(state.index) {
+        if (entry.isIntro) return@LaunchedEffect
+        var handled = 0
+        while (registry.rectsFor(entry.key).isEmpty() && handled < 6) {
+            if (registry.requestScroll(entry.key)) handled++
+            delay(600.milliseconds)
+        }
     }
+
+    var contentRect by remember { mutableStateOf<Rect?>(null) }
     val density = LocalDensity.current
     val gapPx = with(density) { GuideDefaults.contentGap.toPx() }
     val paddingPx = with(density) { GuideDefaults.screenPadding.toPx() }
@@ -89,7 +91,32 @@ internal fun GuideOverlay(
     val layoutDirection = LocalLayoutDirection.current
 
     CompositionLocalProvider(LocalContentColor provides controller.colors.content) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
+                .sharePointerInputWithSiblings()
+        ) {
+            val containerSize = IntSize(constraints.maxWidth, constraints.maxHeight)
+            val anchorsVisible = anchorsVisibleIn(anchors, containerSize)
+
+            // 锚点存在但未完全入视口时，请求滚动容器将其带入视口
+            LaunchedEffect(state.index, anchorsVisible) {
+                if (!entry.isIntro && anchors.isNotEmpty() && !anchorsVisible) {
+                    registry.bringIntoView(entry.key)
+                }
+            }
+
+            val ready = entry.isIntro || anchors.isNotEmpty()
+            // 等待期间不存在引导内容，点击放行区域一并失效
+            if (!ready && contentRect != null) contentRect = null
+
+            // 介绍步骤与未入视口的锚点固定居中展示，入视口后按策略求解
+            val sideHint = registry.sideHintFor(entry.key)
+            val effectivePlacement = when {
+                entry.isIntro || !anchorsVisible -> GuidePlacement.Fixed(Alignment.Center)
+                else -> resolvePlacement(entry.placement, sideHint, anchors)
+            }
+
             Scrim(
                 controller = controller,
                 holes = anchors,

@@ -175,6 +175,24 @@ class GuidePlacementSolverTest {
     }
 
     @Test
+    fun `空锚点视为不可见`() {
+        assertFalse(anchorsVisibleIn(emptyList(), container))
+    }
+
+    @Test
+    fun `完全入视口才可见`() {
+        val visible = listOf(Rect(100f, 100f, 300f, 200f))
+        assertTrue(anchorsVisibleIn(visible, container))
+
+        // 部分出屏
+        assertFalse(anchorsVisibleIn(listOf(Rect(-10f, 100f, 300f, 200f)), container))
+        // 完全出屏
+        assertFalse(anchorsVisibleIn(listOf(Rect(0f, container.height + 10f, 300f, container.height + 100f)), container))
+        // 多锚点时要求全部可见
+        assertFalse(anchorsVisibleIn(visible + listOf(Rect(0f, -50f, 100f, 0f)), container))
+    }
+
+    @Test
     fun `包围盒覆盖多锚点`() {
         val union = listOf(
             Rect(0f, 0f, 100f, 50f),

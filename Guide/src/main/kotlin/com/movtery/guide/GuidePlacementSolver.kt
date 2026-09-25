@@ -49,6 +49,15 @@ internal fun resolvePlacement(
 }
 
 /**
+ * 全部锚点是否完全落在视口内
+ */
+internal fun anchorsVisibleIn(anchors: List<Rect>, containerSize: IntSize): Boolean =
+    anchors.isNotEmpty() && anchors.all { anchor ->
+        anchor.left >= 0f && anchor.top >= 0f &&
+                anchor.right <= containerSize.width && anchor.bottom <= containerSize.height
+    }
+
+/**
  * 求解引导内容的摆放位置：
  * 以锚点包围盒的中心（多个锚点时即其中心点）为参照，内容尽可能贴近该点；
  * 不遮挡锚点、不出屏为硬约束，可行解中取内容中心距参照点最近者；
