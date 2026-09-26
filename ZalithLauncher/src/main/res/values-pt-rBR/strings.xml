@@ -1415,4 +1415,18 @@
     <string name="guide_main_card_drag_text">Mantenha o cartão pressionado para levantá-lo, depois arraste e solte para encaixá-lo do outro lado</string>
     <string name="guide_main_card_tip_title">Parece um pouco vazio por aqui?</string>
     <string name="guide_main_card_tip_text">Não se preocupe, você pode fixar conteúdos aqui como cartões e organizá-los livremente, desde que ofereça a opção “%s”</string>
+    <string name="guide_editor_welcome_title">Bem-vindo ao editor de layout de controle!</string>
+    <string name="guide_editor_welcome_text">Vamos dar uma olhada rápida em como usá-lo.</string>
+    <string name="guide_editor_menu_ball_title">Este é o botão de menu flutuante do editor de layout de controle</string>
+    <string name="guide_editor_menu_ball_text">Arraste-o para mudar de posição! Toque nele para abrir o menu do editor e a lista de camadas de controle</string>
+    <string name="guide_editor_layer_list_title">Esta é a lista de camadas de controle</string>
+    <string name="guide_editor_layer_list_text">Uma camada de controle funciona como uma camada de imagem: é um contêiner que guarda controles. Você pode organizar os controles que adicionar em camadas separadas</string>
+    <string name="guide_editor_layer_list_note">Todas as camadas de controle que você criar serão listadas aqui</string>
+    <string name="guide_editor_create_layer">Toque neste botão para criar uma nova camada de controle</string>
+    <string name="guide_editor_add_widgets_title">Adicione controles aqui!</string>
+    <string name="guide_editor_add_widgets_text">Depois de selecionar uma camada de controle, você pode adicionar a ela qualquer tipo de controle</string>
+    <string name="guide_editor_styles_title">Quer mudar a aparência dos seus controles?</string>
+    <string name="guide_editor_styles_text">Você pode criar aparências para seus controles para reutilizá-los e alternar entre eles rapidamente</string>
+    <string name="guide_editor_preview">Use o modo de pré-visualização para testar seu layout de controle</string>
+    <string name="guide_editor_save">Ao terminar de editar, não se esqueça de salvar o layout de controle!</string>
 </resources>

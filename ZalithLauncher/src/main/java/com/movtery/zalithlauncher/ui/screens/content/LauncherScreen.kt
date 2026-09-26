@@ -193,7 +193,10 @@ fun LauncherScreen(
                 ) {
                     ContentMenu(
                         modifier = Modifier
-                            .guideNode(GuideKeys.Main.Step.CardTip)
+                            .guideNode(
+                                key = GuideKeys.Main.Step.CardTip,
+                                holeRadius = 0.dp
+                            )
                             .weight(ContentWeight)
                             .offset { IntOffset(x = dragState.previewShift.value.roundToInt(), y = 0) },
                         isVisible = isVisible,

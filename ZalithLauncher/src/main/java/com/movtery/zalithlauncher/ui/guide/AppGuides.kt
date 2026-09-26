@@ -22,11 +22,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -35,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.movtery.guide.GuideController
+import com.movtery.guide.NodeClickMode
 import com.movtery.guide.rememberGuide
 import com.movtery.zalithlauncher.BuildKeys
 import com.movtery.zalithlauncher.R
@@ -45,9 +49,11 @@ private const val TAG = "AppGuides"
 
 /**
  * @param mainScreen 启动器主界面的引导
+ * @param editorScreen 控制布局编辑器的引导
  */
 class AppGuides(
-    val mainScreen: GuideController
+    val mainScreen: GuideController,
+    val editorScreen: GuideController,
 ) {
     /**
      * 启动指定组的引导流，启动成功后记录进度
@@ -56,6 +62,7 @@ class AppGuides(
     fun start(group: GuideKeys.Keys): Boolean {
         val controller = when (group) {
             GuideKeys.Main -> mainScreen
+            GuideKeys.Editor -> editorScreen
         }
         val started = controller.start()
         if (started) {
@@ -64,47 +71,36 @@ class AppGuides(
         }
         return started
     }
+
+    /**
+     * 首次启动指定组的引导流，持久化存储，确保引导仅播放一次
+     * @return 是否成功启动（流为空或已有其他流激活时失败，或者播放过）
+     */
+    fun startOnce(group: GuideKeys.Keys): Boolean {
+        if (GuideProgress.isPlayed(group)) return false
+        return start(group)
+    }
 }
 
 @Composable
-fun rememberAppGuides(eventViewModel: EventViewModel): AppGuides {
-    val mainScreen = rememberGuide(holeRadius = 28.dp) {
-        intro {
-            GuideCard(
-                title = stringResource(R.string.guide_main_welcome_title, BuildKeys.LAUNCHER_NAME),
-                text = stringResource(R.string.guide_main_welcome_text)
-            )
-        }
-        entry(GuideKeys.Main.Step.Account) {
-            GuideCard(stringResource(R.string.guide_main_account))
-        }
-        entry(GuideKeys.Main.Step.VersionList) {
-            GuideCard(stringResource(R.string.guide_main_version_list))
-        }
-        entry(GuideKeys.Main.Step.CardDrag) {
-            GuideCard(
-                title = stringResource(R.string.guide_main_card_drag_title),
-                text = stringResource(R.string.guide_main_card_drag_text)
-            )
-        }
-        entry(GuideKeys.Main.Step.CardTip) {
-            GuideCard(
-                title = stringResource(R.string.guide_main_card_tip_title),
-                text = stringResource(
-                    R.string.guide_main_card_tip_text,
-                    stringResource(R.string.home_add_version_card)
-                )
-            )
-        }
-    }
-    val guides = remember(mainScreen) {
-        AppGuides(mainScreen)
+fun rememberAppGuides(
+    eventViewModel: EventViewModel? = null
+): AppGuides {
+    val mainScreen = rememberMainGuides()
+    val editorScreen = rememberEditorGuides()
+
+    val guides = remember(mainScreen, editorScreen) {
+        AppGuides(mainScreen, editorScreen)
     }
 
-    LaunchedEffect(guides) {
-        eventViewModel.events.collect { event ->
-            if (event is EventViewModel.Event.StartGuide) {
-                guides.start(event.group)
+    eventViewModel?.let { viewModel ->
+        LaunchedEffect(guides) {
+            viewModel.events.collect { event ->
+                when (event) {
+                    is EventViewModel.Event.Guide.StartGuide -> guides.start(event.group)
+                    is EventViewModel.Event.Guide.StartGuideOnce -> guides.startOnce(event.group)
+                    else -> {}
+                }
             }
         }
     }
@@ -112,19 +108,107 @@ fun rememberAppGuides(eventViewModel: EventViewModel): AppGuides {
     return guides
 }
 
+@Composable
+private fun rememberMainGuides() = rememberGuide(holeRadius = 28.dp) {
+    intro {
+        GuideCard {
+            Text(stringResource(R.string.guide_main_welcome_title, BuildKeys.LAUNCHER_NAME))
+            Text(stringResource(R.string.guide_main_welcome_text))
+        }
+    }
+    entry(GuideKeys.Main.Step.Account) {
+        GuideCard {
+            Text(stringResource(R.string.guide_main_account))
+        }
+    }
+    entry(GuideKeys.Main.Step.VersionList) {
+        GuideCard {
+            Text(stringResource(R.string.guide_main_version_list))
+        }
+    }
+    entry(GuideKeys.Main.Step.CardDrag) {
+        GuideCard {
+            Text(stringResource(R.string.guide_main_card_drag_title))
+            Text(stringResource(R.string.guide_main_card_drag_text))
+        }
+    }
+    entry(GuideKeys.Main.Step.CardTip) {
+        GuideCard {
+            Text(stringResource(R.string.guide_main_card_tip_title))
+            Text(stringResource(
+                R.string.guide_main_card_tip_text,
+                stringResource(R.string.home_add_version_card)
+            ))
+        }
+    }
+}
+
+@Composable
+private fun rememberEditorGuides() = rememberGuide {
+    intro {
+        GuideCard {
+            Text(stringResource(R.string.guide_editor_welcome_title))
+            Text(stringResource(R.string.guide_editor_welcome_text))
+        }
+    }
+    entry(
+        key = GuideKeys.Editor.Step.MenuBall,
+        nodeClick = NodeClickMode.PassThrough,
+        advanceOnScrimClick = false
+    ) {
+        GuideCard {
+            Text(stringResource(R.string.guide_editor_menu_ball_title))
+            Text(stringResource(R.string.guide_editor_menu_ball_text))
+        }
+    }
+    entry(GuideKeys.Editor.Step.LayerList) {
+        GuideCard {
+            Text(stringResource(R.string.guide_editor_layer_list_title))
+            Text(stringResource(R.string.guide_editor_layer_list_text))
+            Text(stringResource(R.string.guide_editor_layer_list_note))
+        }
+    }
+    entry(GuideKeys.Editor.Step.CreateLayer) {
+        GuideCard {
+            Text(stringResource(R.string.guide_editor_create_layer))
+        }
+    }
+    entry(GuideKeys.Editor.Step.AddButtons) {
+        GuideCard {
+            Text(stringResource(R.string.guide_editor_add_widgets_title))
+            Text(stringResource(R.string.guide_editor_add_widgets_text))
+        }
+    }
+    entry(GuideKeys.Editor.Step.AddStyles) {
+        GuideCard {
+            Text(stringResource(R.string.guide_editor_styles_title))
+            Text(stringResource(R.string.guide_editor_styles_text))
+        }
+    }
+    entry(GuideKeys.Editor.Step.Preview) {
+        GuideCard {
+            Text(stringResource(R.string.guide_editor_preview))
+        }
+    }
+    entry(GuideKeys.Editor.Step.Save) {
+        GuideCard {
+            Text(stringResource(R.string.guide_editor_save))
+        }
+    }
+}
+
 /**
  * 发布启动引导事件
  */
 fun EventViewModel.sendStartGuide(group: GuideKeys.Keys) {
-    sendEvent(EventViewModel.Event.StartGuide(group))
+    sendEvent(EventViewModel.Event.Guide.StartGuide(group))
 }
 
 /**
  * 发布启动引导事件，已播放过的引导将被忽略
  */
 fun EventViewModel.sendStartGuideOnce(group: GuideKeys.Keys) {
-    if (GuideProgress.isPlayed(group)) return
-    sendStartGuide(group)
+    sendEvent(EventViewModel.Event.Guide.StartGuideOnce(group))
 }
 
 /**
@@ -132,9 +216,8 @@ fun EventViewModel.sendStartGuideOnce(group: GuideKeys.Keys) {
  */
 @Composable
 private fun GuideCard(
-    text: String,
     modifier: Modifier = Modifier,
-    title: String? = null,
+    text: @Composable ColumnScope.() -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -146,17 +229,11 @@ private fun GuideCard(
             modifier = Modifier.padding(all = 18.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            title?.let { str ->
-                Text(
-                    text = str,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+            CompositionLocalProvider(
+                LocalTextStyle provides MaterialTheme.typography.bodyMedium
+            ) {
+                text()
             }
-
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyMedium
-            )
         }
     }
 }

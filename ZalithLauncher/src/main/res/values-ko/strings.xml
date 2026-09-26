@@ -1013,4 +1013,18 @@
     <string name="guide_main_card_drag_text">카드를 길게 눌러 들어올린 뒤, 드래그해서 반대쪽에 놓을 수 있어요</string>
     <string name="guide_main_card_tip_title">여기가 좀 텅 빈 것 같나요?</string>
     <string name="guide_main_card_tip_text">걱정 마세요. “%s” 옵션이 있는 콘텐츠는 카드로 여기에 자유롭게 배치할 수 있어요</string>
+    <string name="guide_editor_welcome_title">컨트롤 레이아웃 편집기에 오신 것을 환영합니다!</string>
+    <string name="guide_editor_welcome_text">간단한 사용 방법을 알아보겠습니다.</string>
+    <string name="guide_editor_menu_ball_title">이것은 컨트롤 레이아웃 편집기의 플로팅 메뉴 버튼입니다</string>
+    <string name="guide_editor_menu_ball_text">드래그하여 위치를 변경할 수 있습니다! 탭하면 메뉴와 컨트롤 레이어 목록이 열립니다</string>
+    <string name="guide_editor_layer_list_title">이것은 컨트롤 레이어 목록입니다</string>
+    <string name="guide_editor_layer_list_text">컨트롤 레이어는 그래픽 레이어와 같은 것으로, 컨트롤을 담는 그릇입니다. 컨트롤을 레이어별로 나누어 관리할 수 있습니다</string>
+    <string name="guide_editor_layer_list_note">추가한 모든 컨트롤 레이어가 여기에 표시됩니다</string>
+    <string name="guide_editor_create_layer">이 버튼을 탭하여 새 컨트롤 레이어를 만드세요</string>
+    <string name="guide_editor_add_widgets_title">여기서 컨트롤을 추가하세요!</string>
+    <string name="guide_editor_add_widgets_text">컨트롤 레이어를 선택한 후 원하는 유형의 컨트롤을 추가할 수 있습니다</string>
+    <string name="guide_editor_styles_title">컨트롤의 모양을 바꾸고 싶으신가요?</string>
+    <string name="guide_editor_styles_text">컨트롤의 외관을 만들어 두면 빠르게 재사용하고 전환할 수 있습니다</string>
+    <string name="guide_editor_preview">미리보기 기능으로 컨트롤 레이아웃을 테스트해 보세요!</string>
+    <string name="guide_editor_save">편집을 마쳤다면 컨트롤 레이아웃 저장을 잊지 마세요!</string>
 </resources>

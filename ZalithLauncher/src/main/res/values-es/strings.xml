@@ -1023,4 +1023,18 @@
     <string name="guide_main_card_drag_text">Mantén pulsada la tarjeta para levantarla, arrástrala y suéltala para acoplarla en el otro lado</string>
     <string name="guide_main_card_tip_title">¿Se ve un poco vacío aquí?</string>
     <string name="guide_main_card_tip_text">No te preocupes: puedes fijar contenido aquí como tarjetas y organizarlas libremente, siempre que ofrezca la opción “%s”</string>
+    <string name="guide_editor_welcome_title">¡Bienvenido al editor de diseños de control!</string>
+    <string name="guide_editor_welcome_text">Echemos un vistazo rápido a cómo usarlo.</string>
+    <string name="guide_editor_menu_ball_title">Este es el botón del menú flotante del editor de diseños de control</string>
+    <string name="guide_editor_menu_ball_text">¡Arrástralo para cambiar su posición! Tócalo para abrir el menú del editor y la lista de capas de control</string>
+    <string name="guide_editor_layer_list_title">Esta es la lista de capas de control</string>
+    <string name="guide_editor_layer_list_text">Una capa de control funciona como una capa de imagen: es un contenedor que guarda controles. Puedes organizar los controles que añadas en capas separadas</string>
+    <string name="guide_editor_layer_list_note">Todas las capas de control que crees se mostrarán aquí</string>
+    <string name="guide_editor_create_layer">Toca este botón para crear una nueva capa de control</string>
+    <string name="guide_editor_add_widgets_title">¡Añade controles aquí!</string>
+    <string name="guide_editor_add_widgets_text">Una vez seleccionada una capa de control, puedes añadirle cualquier tipo de control</string>
+    <string name="guide_editor_styles_title">¿Quieres cambiar el aspecto de tus controles?</string>
+    <string name="guide_editor_styles_text">Puedes crear aspectos para tus controles y reutilizarlos o cambiar entre ellos rápidamente</string>
+    <string name="guide_editor_preview">Usa el modo de vista previa para probar tu diseño de controles</string>
+    <string name="guide_editor_save">Cuando termines de editar, ¡no olvides guardar el diseño de control!</string>
 </resources>

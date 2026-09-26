@@ -1447,4 +1447,18 @@
     <string name="guide_main_card_drag_text">你可以長按卡片提起它，拖曳並讓它停靠到另一側喔</string>
     <string name="guide_main_card_tip_title">這裡太空曠了？</string>
     <string name="guide_main_card_tip_text">別擔心，你可以將一些內容作為卡片放到這裡自由排布，只要它提供了「%s」選項</string>
+    <string name="guide_editor_welcome_title">歡迎使用控制佈局編輯器！</string>
+    <string name="guide_editor_welcome_text">我們來簡單了解一下如何使用它吧！</string>
+    <string name="guide_editor_menu_ball_title">這是控制佈局編輯器的懸浮選單</string>
+    <string name="guide_editor_menu_ball_text">拖曳它可變更懸浮選單的位置！點擊它以開啟選單與控制項圖層列表</string>
+    <string name="guide_editor_layer_list_title">這是控制項圖層列表</string>
+    <string name="guide_editor_layer_list_text">控制項圖層就相當於圖層，是承載控制項的容器。你可以分層管理、控制在控制項圖層上加入的控制項</string>
+    <string name="guide_editor_layer_list_note">你所加入的所有控制項圖層都會在此處列出</string>
+    <string name="guide_editor_create_layer">點擊此按鈕以建立新的控制項圖層</string>
+    <string name="guide_editor_add_widgets_title">在這裡加入控制項！</string>
+    <string name="guide_editor_add_widgets_text">選取控制項圖層之後，你可以為其加入任意類型的控制項</string>
+    <string name="guide_editor_styles_title">想調整控制項的外觀？</string>
+    <string name="guide_editor_styles_text">你可以為控制項建立一些外觀，以便快速複用與切換不同的外觀</string>
+    <string name="guide_editor_preview">可以透過預覽功能來測試你的控制佈局</string>
+    <string name="guide_editor_save">編輯完成後，記得儲存控制佈局！</string>
 </resources>

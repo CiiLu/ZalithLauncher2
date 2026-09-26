@@ -102,4 +102,18 @@
     <string name="guide_main_card_drag_text">كارتىنى ئۇزۇن بېسىپ كۆتۈرۈڭ، ئاندىن سۆرەپ يەنە بىر تەرەپكە قويۇڭ</string>
     <string name="guide_main_card_tip_title">بۇ يەر بەك بوشمۇ؟</string>
     <string name="guide_main_card_tip_text">ئەنسىرىمەڭ، «%s» تاللىنىشى بولغان مەزمۇنلارنى كارتا سۈپىتىدە بۇ يەرگە ئەركىن ئورۇنلاشتۇرالايسىز</string>
+    <string name="guide_editor_welcome_title">كونترول ئورۇنلاشتۇرۇش تەھرىرلىگۈچىسىگە خۇش كەپسىز!</string>
+    <string name="guide_editor_welcome_text">ئۇنىڭ ئىشلىتىلىشىنى قىسقىچە كۆرۈپ چىقايلى.</string>
+    <string name="guide_editor_menu_ball_title">بۇ كونترول ئورۇنلاشتۇرۇش تەھرىرلىگۈچىسىنىڭ لەيلىمە تىزىملىك كۇنۇپكىسى</string>
+    <string name="guide_editor_menu_ball_text">ئورنىنى ئۆزگەرتىش ئۈچۈن سۆرەڭ! تىزىملىك ۋە كونترول قەۋەتلىرى تىزىملىكىنى ئېچىش ئۈچۈن چېكىڭ</string>
+    <string name="guide_editor_layer_list_title">بۇ كونترول قەۋەتلىرى تىزىملىكى</string>
+    <string name="guide_editor_layer_list_text">كونترول قەۋىتى رەسىم قەۋىتىگە ئوخشايدۇ: ئۇ كونتروللارنى ساقلايدىغان قاچا. قوشقان كونتروللىرىڭىزنى ئايرىم قەۋەتلەرگە بۆلۈپ باشقۇرالايسىز</string>
+    <string name="guide_editor_layer_list_note">قوشقان بارلىق كونترول قەۋەتلىرى مۇشۇ يەردە كۆرۈنىدۇ</string>
+    <string name="guide_editor_create_layer">يېڭى كونترول قەۋىتى قۇرۇش ئۈچۈن بۇ كۇنۇپكىنى چېكىڭ</string>
+    <string name="guide_editor_add_widgets_title">كونتروللارنى مۇشۇ يەردە قوشۇڭ!</string>
+    <string name="guide_editor_add_widgets_text">كونترول قەۋىتى تاللانغاندىن كېيىن، ئۇنىڭغا خالىغان تىپتىكى كونترول قوشالايسىز</string>
+    <string name="guide_editor_styles_title">كونتروللارنىڭ سىرتقى كۆرۈنۈشىنى ئۆزگەرتمەكچىمۇسىز؟</string>
+    <string name="guide_editor_styles_text">كونتروللارغا سىرتقى كۆرۈنۈشلەرنى قۇرالايسىز، بۇ ئارقىلىق تېزلا قايتا ئىشلەتكىلى ۋە ئالماشتۇرغىلى بولىدۇ</string>
+    <string name="guide_editor_preview">كونترول ئورۇنلاشتۇرۇشىڭىزنى سىناش ئۈچۈن ئالدىن كۆرۈش ئىقتىدارىدىن پايدىلىنىڭ</string>
+    <string name="guide_editor_save">تەھرىرلەش تاماملانغاندىن كېيىن، كونترول ئورۇنلاشتۇرۇشىنى ساقلاشنى ئۇنتۇڭ!</string>
 </resources>

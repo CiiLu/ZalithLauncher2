@@ -38,4 +38,24 @@ sealed interface GuideKeys : GuideKey {
             data object CardTip : Step
         }
     }
+
+    /** 控制布局编辑器的引导 */
+    data object Editor : Keys {
+        sealed interface Step : GuideKey {
+            /** 悬浮菜单 */
+            data object MenuBall : Step
+            /** 控件层列表 */
+            data object LayerList : Step
+            /** 创建控件层 */
+            data object CreateLayer : Step
+            /** 创建控件 */
+            data object AddButtons : Step
+            /** 创建控件样式 */
+            data object AddStyles : Step
+            /** 预览控制布局 */
+            data object Preview : Step
+            /** 保存 */
+            data object Save : Step
+        }
+    }
 }

@@ -1228,4 +1228,18 @@
     <string name="guide_main_card_drag_text">Nhấn giữ thẻ để nhấc nó lên, sau đó kéo và thả để ghim sang phía bên kia</string>
     <string name="guide_main_card_tip_title">Chỗ này trông hơi trống trải?</string>
     <string name="guide_main_card_tip_text">Đừng lo, bạn có thể ghim nội dung vào đây dưới dạng thẻ và sắp xếp tự do, miễn là nó cung cấp tùy chọn “%s”</string>
+    <string name="guide_editor_welcome_title">Chào mừng đến với trình chỉnh sửa bố cục điều khiển!</string>
+    <string name="guide_editor_welcome_text">Cùng tìm hiểu nhanh cách sử dụng nhé.</string>
+    <string name="guide_editor_menu_ball_title">Đây là nút menu nổi của trình chỉnh sửa bố cục điều khiển</string>
+    <string name="guide_editor_menu_ball_text">Kéo để thay đổi vị trí! Chạm để mở menu trình chỉnh sửa và danh sách layer</string>
+    <string name="guide_editor_layer_list_title">Đây là danh sách layer</string>
+    <string name="guide_editor_layer_list_text">Layer hoạt động giống như layer đồ họa: là nơi chứa các nút điều khiển. Bạn có thể phân các nút điều khiển đã thêm vào từng layer riêng để quản lý</string>
+    <string name="guide_editor_layer_list_note">Mọi layer bạn tạo sẽ được liệt kê tại đây</string>
+    <string name="guide_editor_create_layer">Chạm vào nút này để tạo layer mới</string>
+    <string name="guide_editor_add_widgets_title">Thêm nút điều khiển tại đây!</string>
+    <string name="guide_editor_add_widgets_text">Sau khi chọn layer, bạn có thể thêm nút điều khiển thuộc bất kỳ loại nào vào đó</string>
+    <string name="guide_editor_styles_title">Muốn thay đổi giao diện của nút điều khiển?</string>
+    <string name="guide_editor_styles_text">Bạn có thể tạo các giao diện cho nút điều khiển để tái sử dụng và chuyển đổi nhanh chóng</string>
+    <string name="guide_editor_preview">Bạn có thể dùng chế độ xem trước để thử bố cục điều khiển</string>
+    <string name="guide_editor_save">Sau khi chỉnh sửa xong, đừng quên lưu bố cục điều khiển!</string>
 </resources>

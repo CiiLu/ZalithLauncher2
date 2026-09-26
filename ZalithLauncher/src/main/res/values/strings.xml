@@ -1485,4 +1485,32 @@
     <string name="guide_main_card_tip_title">Looking a bit empty here?</string>
     <!-- Body of the guide card about pinning contents as cards on the main screen; %s is the name of the pin-to-home option -->
     <string name="guide_main_card_tip_text">Don\'t worry! You can pin content here as cards and arrange it freely, as long as it provides the “%s” option</string>
+    <!-- Welcome card shown centered on the screen at the very start of the control-editor guide -->
+    <string name="guide_editor_welcome_title">Welcome to the control layout editor!</string>
+    <!-- Second line of the centered welcome card that opens the control-editor guide -->
+    <string name="guide_editor_welcome_text">Let\'s take a quick look at how to use it.</string>
+    <!-- Title of the guide card for the floating menu button of the control-editor screen -->
+    <string name="guide_editor_menu_ball_title">This is the control layout editor\'s floating menu button</string>
+    <!-- Body of the guide card about the floating menu button; dragging repositions it, tapping opens the editor menu with the control layer list -->
+    <string name="guide_editor_menu_ball_text">Drag it to reposition it! Tap it to open the editor menu and the control layer list</string>
+    <!-- Title of the guide card for the control layer list in the right-hand editor menu card -->
+    <string name="guide_editor_layer_list_title">This is the control layer list</string>
+    <!-- Body explaining the concept: a control layer works like a graphics layer and acts as a container for controls -->
+    <string name="guide_editor_layer_list_text">A control layer works like a graphics layer: it is a container that holds controls. You can organize the controls you add by placing them on separate layers</string>
+    <!-- Closing line of the control-layer-list guide card; all created layers appear in this list -->
+    <string name="guide_editor_layer_list_note">Every control layer you add will be listed here</string>
+    <!-- Guide card for the button at the bottom of the control layer list that creates a new control layer -->
+    <string name="guide_editor_create_layer">Tap this button to create a new control layer</string>
+    <!-- Title of the guide card for the add-control buttons at the top of the editor menu -->
+    <string name="guide_editor_add_widgets_title">Add controls here!</string>
+    <!-- Body explaining that controls are added to the currently selected control layer -->
+    <string name="guide_editor_add_widgets_text">Once a control layer is selected, you can add any type of control to it</string>
+    <!-- Title of the guide card for the control and joystick appearance lists in the editor menu -->
+    <string name="guide_editor_styles_title">Want to change how your controls look?</string>
+    <!-- Body explaining control appearances, which can be created once and reused across controls -->
+    <string name="guide_editor_styles_text">You can create appearances for your controls so they can be quickly reused and switched between</string>
+    <!-- Guide card for the preview option in the editor menu; preview mode lets the user test the control layout -->
+    <string name="guide_editor_preview">Use the preview mode to test out your control layout</string>
+    <!-- Final guide card reminding the user to save the control layout -->
+    <string name="guide_editor_save">Once you\'re done editing, remember to save your control layout!</string>
 </resources>

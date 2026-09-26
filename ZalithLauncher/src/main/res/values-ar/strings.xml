@@ -538,4 +538,18 @@
     <string name="guide_main_card_drag_text">اضغط مطولًا على البطاقة لرفعها، ثم اسحبها وأفلتها لتثبيتها في الجهة الأخرى</string>
     <string name="guide_main_card_tip_title">يبدو هذا المكان فارغًا قليلًا؟</string>
     <string name="guide_main_card_tip_text">لا تقلق، يمكنك تثبيت المحتوى هنا كبطاقات وترتيبها بحرية، طالما أنه يوفر خيار “%s”</string>
+    <string name="guide_editor_welcome_title">مرحبًا بك في محرر تخطيطات التحكم!</string>
+    <string name="guide_editor_welcome_text">لنلقي نظرة سريعة على طريقة استخدامه.</string>
+    <string name="guide_editor_menu_ball_title">هذا هو زر القائمة العائمة لمحرر تخطيطات التحكم</string>
+    <string name="guide_editor_menu_ball_text">اسحبه لتغيير موقعه! انقر عليه لفتح قائمة المحرر وقائمة طبقات التحكم</string>
+    <string name="guide_editor_layer_list_title">هذه قائمة طبقات التحكم</string>
+    <string name="guide_editor_layer_list_text">تعمل طبقة التحكم كطبقة رسومية: فهي وعاء يحتوي على عناصر التحكم. يمكنك تنظيم عناصر التحكم التي تضيفها عبر طبقات منفصلة</string>
+    <string name="guide_editor_layer_list_note">ستُدرج جميع طبقات التحكم التي تنشئها هنا</string>
+    <string name="guide_editor_create_layer">انقر على هذا الزر لإنشاء طبقة تحكم جديدة</string>
+    <string name="guide_editor_add_widgets_title">أضف عناصر التحكم هنا!</string>
+    <string name="guide_editor_add_widgets_text">بعد تحديد طبقة تحكم، يمكنك إضافة أي نوع من عناصر التحكم إليها</string>
+    <string name="guide_editor_styles_title">هل تريد تغيير مظهر عناصر التحكم؟</string>
+    <string name="guide_editor_styles_text">يمكنك إنشاء مظاهر لعناصر التحكم لإعادة استخدامها والتبديل بينها بسرعة</string>
+    <string name="guide_editor_preview">استخدم وضع المعاينة لتجربة تخطيط التحكم الخاص بك</string>
+    <string name="guide_editor_save">بعد الانتهاء من التحرير، لا تنسَ حفظ تخطيط التحكم!</string>
 </resources>

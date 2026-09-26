@@ -1215,4 +1215,18 @@
     <string name="guide_main_card_drag_text">Kartı kaldırmak için uzun basın, ardından diğer tarafa yuvalamak için sürükleyip bırakın</string>
     <string name="guide_main_card_tip_title">Burası biraz boş mu görünüyor?</string>
     <string name="guide_main_card_tip_text">Endişelenmeyin, “%s” seçeneğini sunan içerikleri buraya kart olarak sabitleyip dilediğiniz gibi düzenleyebilirsiniz</string>
+    <string name="guide_editor_welcome_title">Kontrol düzeni düzenleyicisine hoş geldiniz!</string>
+    <string name="guide_editor_welcome_text">Nasıl kullanılacağına hızlıca bir göz atalım.</string>
+    <string name="guide_editor_menu_ball_title">Bu, kontrol düzeni düzenleyicisinin yüzen menü düğmesidir</string>
+    <string name="guide_editor_menu_ball_text">Konumunu değiştirmek için sürükleyin! Düzenleyici menüsünü ve kontrol katmanları listesini açmak için dokunun</string>
+    <string name="guide_editor_layer_list_title">Bu, kontrol katmanları listesidir</string>
+    <string name="guide_editor_layer_list_text">Kontrol katmanı bir grafik katmanı gibi çalışır: kontrolleri barındıran bir kapsayıcıdır. Eklediğiniz kontrolleri ayrı katmanlara dağıtarak yönetebilirsiniz</string>
+    <string name="guide_editor_layer_list_note">Oluşturduğunuz tüm kontrol katmanları burada listelenir</string>
+    <string name="guide_editor_create_layer">Yeni bir kontrol katmanı oluşturmak için bu düğmeye dokunun</string>
+    <string name="guide_editor_add_widgets_title">Kontrolleri buraya ekleyin!</string>
+    <string name="guide_editor_add_widgets_text">Bir kontrol katmanı seçtikten sonra içine her türden kontrol ekleyebilirsiniz</string>
+    <string name="guide_editor_styles_title">Kontrollerinizin görünümünü değiştirmek ister misiniz?</string>
+    <string name="guide_editor_styles_text">Kontroller için görünümler oluşturabilir; bunları hızlıca yeniden kullanıp aralarında geçiş yapabilirsiniz</string>
+    <string name="guide_editor_preview">Kontrol düzenini test etmek için önizleme modunu kullanabilirsin</string>
+    <string name="guide_editor_save">Düzenlemeyi bitirdiğinde kontrol düzenini kaydetmeyi unutma!</string>
 </resources>

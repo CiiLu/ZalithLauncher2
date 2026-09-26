@@ -126,8 +126,12 @@ class EventViewModel : ViewModel() {
             val currentPath: String? = null,
         ) : Event
 
-        /** 启动一组引导 */
-        data class StartGuide(val group: GuideKeys.Keys) : Event
+        sealed interface Guide : Event {
+            /** 启动一组引导 */
+            data class StartGuide(val group: GuideKeys.Keys) : Guide
+            /** 仅启动一组引导一次 */
+            data class StartGuideOnce(val group: GuideKeys.Keys) : Guide
+        }
     }
 }
 

@@ -35,6 +35,7 @@ object GuideProgress {
      */
     fun keyOf(group: GuideKeys.Keys) = when (group) {
         GuideKeys.Main -> "started_Main"
+        GuideKeys.Editor -> "started_Editor"
     }
 
     /**
