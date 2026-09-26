@@ -18,10 +18,5 @@ data class GuideColors(
      * 引导内容的默认颜色
      * @see LocalContentColor
      */
-    val content: Color = Color.White,
-
-    /**
-     * 遮罩镂空边缘颜色
-     */
-    val holeBorder: Color = Color.White
+    val content: Color = Color.White
 )

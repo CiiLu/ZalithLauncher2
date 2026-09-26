@@ -43,9 +43,9 @@ class GuideBuilder internal constructor() {
 /**
  * 构建并记住一条引导流
  *
- * @param colors 引导层配色：遮罩、内容默认色、镂空边缘
- * @param holeRadius 镂空与边框的圆角半径
- * @param holeBorderWidth 镂空边缘描边宽度，0 表示无边框
+ * @param colors 引导层配色：遮罩、内容默认色
+ * @param holeRadius 锚点未声明镂空圆角时的全局默认值
+ * @param holeBorderWidth 锚点未声明镂空描边时的全局默认值，0 表示无边框
  */
 @Composable
 fun rememberGuide(

@@ -1,6 +1,7 @@
 package com.movtery.guide
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntOffsetAsState
@@ -61,9 +62,10 @@ internal fun GuideOverlay(
 ) {
     val entry = state.entry
 
-    // 观察注册表版本，解析当前步骤的锚点边界
+    // 观察注册表版本，解析当前步骤的锚点节点
     val version = registry.version
-    val anchors = remember(entry.key, version) { registry.rectsFor(entry.key) }
+    val nodes = remember(entry.key, version) { registry.nodesFor(entry.key) }
+    val anchors = nodes.map(GuideNode::bounds)
 
     // 回写锚点，供应用侧通过 GuideState.Active.anchors 观察就绪情况
     LaunchedEffect(state.index, anchors) {
@@ -86,9 +88,16 @@ internal fun GuideOverlay(
     val density = LocalDensity.current
     val gapPx = with(density) { GuideDefaults.contentGap.toPx() }
     val paddingPx = with(density) { GuideDefaults.screenPadding.toPx() }
-    val radiusPx = with(density) { controller.holeRadius.toPx() }
-    val borderWidthPx = with(density) { controller.holeBorderWidth.toPx() }
     val layoutDirection = LocalLayoutDirection.current
+
+    // 节点声明的镂空样式优先，未声明时回落引导流全局配置或库默认值
+    val holeStyles = nodes.map { node ->
+        HoleStyle(
+            radiusPx = with(density) { (node.holeRadius ?: controller.holeRadius).toPx() },
+            borderWidthPx = with(density) { (node.holeBorderWidth ?: controller.holeBorderWidth).toPx() },
+            borderColor = node.holeBorderColor ?: GuideDefaults.holeBorder
+        )
+    }
 
     CompositionLocalProvider(LocalContentColor provides controller.colors.content) {
         BoxWithConstraints(
@@ -120,10 +129,9 @@ internal fun GuideOverlay(
             Scrim(
                 controller = controller,
                 holes = anchors,
+                styles = holeStyles,
                 ready = ready,
                 fadeAlpha = fadeAlpha,
-                radiusPx = radiusPx,
-                borderWidthPx = borderWidthPx,
                 contentRect = contentRect,
                 isIntro = entry.isIntro,
                 nodeClick = entry.nodeClick,
@@ -156,10 +164,9 @@ internal fun GuideOverlay(
 private fun Scrim(
     controller: GuideController,
     holes: List<Rect>,
+    styles: List<HoleStyle>,
     ready: Boolean,
     fadeAlpha: Float,
-    radiusPx: Float,
-    borderWidthPx: Float,
     contentRect: Rect?,
     isIntro: Boolean,
     nodeClick: NodeClickMode,
@@ -184,8 +191,21 @@ private fun Scrim(
     } else {
         snap()
     }
+    val colorSpec: FiniteAnimationSpec<Color> = if (animations.enabled) {
+        spring(
+            dampingRatio = animations.spatialSpring.dampingRatio,
+            stiffness = animations.spatialSpring.stiffness
+        )
+    } else {
+        snap()
+    }
     val animatedHoles = holes.mapIndexed { index, rect ->
-        key(index) { animateHoleRect(rect, holeSpec) }
+        key(index) {
+            HoleFrame(
+                rect = animateHoleRect(rect, holeSpec),
+                style = animateHoleStyle(styles[index], holeSpec, colorSpec)
+            )
+        }
     }
     val currentAnimatedHoles by rememberUpdatedState(animatedHoles)
 
@@ -198,22 +218,23 @@ private fun Scrim(
                 drawRect(scrim.copy(alpha = scrim.alpha * fadeAlpha))
                 if (currentReady) {
                     currentAnimatedHoles.forEach { hole ->
+                        val style = hole.style
                         drawRoundRect(
                             color = Color.Black,
-                            topLeft = hole.topLeft,
-                            size = hole.size,
-                            cornerRadius = CornerRadius(radiusPx),
+                            topLeft = hole.rect.topLeft,
+                            size = hole.rect.size,
+                            cornerRadius = CornerRadius(style.radiusPx),
                             blendMode = BlendMode.Clear
                         )
-                        if (borderWidthPx > 0f) {
+                        if (style.borderWidthPx > 0f) {
                             // 描边整体落在镂空外侧，不侵入被引导组件
-                            val border = hole.inflate(borderWidthPx / 2f)
+                            val border = hole.rect.inflate(style.borderWidthPx / 2f)
                             drawRoundRect(
-                                color = currentColors.holeBorder,
+                                color = style.borderColor,
                                 topLeft = border.topLeft,
                                 size = border.size,
-                                cornerRadius = CornerRadius(radiusPx + borderWidthPx / 2f),
-                                style = Stroke(width = borderWidthPx)
+                                cornerRadius = CornerRadius(style.radiusPx + style.borderWidthPx / 2f),
+                                style = Stroke(width = style.borderWidthPx)
                             )
                         }
                     }
@@ -280,6 +301,32 @@ private fun animateHoleRect(target: Rect, spec: FiniteAnimationSpec<Float>): Rec
     val bottom by animateFloatAsState(target.bottom, spec, label = "holeBottom")
     return Rect(left, top, right, bottom)
 }
+
+@Composable
+private fun animateHoleStyle(
+    target: HoleStyle,
+    spec: FiniteAnimationSpec<Float>,
+    colorSpec: FiniteAnimationSpec<Color>
+): HoleStyle {
+    val radiusPx by animateFloatAsState(target.radiusPx, spec, label = "holeRadius")
+    val borderWidthPx by animateFloatAsState(target.borderWidthPx, spec, label = "holeBorderWidth")
+    val borderColor by animateColorAsState(target.borderColor, colorSpec, label = "holeBorderColor")
+    return HoleStyle(radiusPx, borderWidthPx, borderColor)
+}
+
+/**
+ * 单个镂空的绘制样式，像素已解析
+ */
+private data class HoleStyle(
+    val radiusPx: Float,
+    val borderWidthPx: Float,
+    val borderColor: Color
+)
+
+/**
+ * 单个镂空的动画帧
+ */
+private data class HoleFrame(val rect: Rect, val style: HoleStyle)
 
 /**
  * 引导内容容器，测量内容并按放置策略求解目标位置，

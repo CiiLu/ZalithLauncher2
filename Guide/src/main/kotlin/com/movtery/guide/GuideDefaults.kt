@@ -2,6 +2,7 @@ package com.movtery.guide
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -17,6 +18,10 @@ object GuideDefaults {
      * 镂空圆角半径
      */
     val holeRadius: Dp = 8.dp
+    /**
+     * 镂空描边默认颜色
+     */
+    val holeBorder: Color = Color.White
     /**
      * 引导内容与锚点的间距
      */
