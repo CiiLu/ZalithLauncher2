@@ -2,6 +2,7 @@ package com.movtery.guide
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntOffsetAsState
@@ -19,8 +20,10 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -44,6 +47,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.util.lerp
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
@@ -91,11 +95,14 @@ internal fun GuideOverlay(
     val layoutDirection = LocalLayoutDirection.current
 
     // 节点声明的镂空样式优先，未声明时回落引导流全局配置或库默认值
-    val holeStyles = nodes.map { node ->
-        HoleStyle(
-            radiusPx = with(density) { (node.holeRadius ?: controller.holeRadius).toPx() },
-            borderWidthPx = with(density) { (node.holeBorderWidth ?: controller.holeBorderWidth).toPx() },
-            borderColor = node.holeBorderColor ?: GuideDefaults.holeBorder
+    val holes = nodes.map { node ->
+        HoleTarget(
+            rect = node.bounds,
+            style = HoleStyle(
+                radiusPx = with(density) { (node.holeRadius ?: controller.holeRadius).toPx() },
+                borderWidthPx = with(density) { (node.holeBorderWidth ?: controller.holeBorderWidth).toPx() },
+                borderColor = node.holeBorderColor ?: GuideDefaults.holeBorder
+            )
         )
     }
 
@@ -128,8 +135,7 @@ internal fun GuideOverlay(
 
             Scrim(
                 controller = controller,
-                holes = anchors,
-                styles = holeStyles,
+                holes = holes,
                 ready = ready,
                 fadeAlpha = fadeAlpha,
                 contentRect = contentRect,
@@ -163,8 +169,7 @@ internal fun GuideOverlay(
 @Composable
 private fun Scrim(
     controller: GuideController,
-    holes: List<Rect>,
-    styles: List<HoleStyle>,
+    holes: List<HoleTarget>,
     ready: Boolean,
     fadeAlpha: Float,
     contentRect: Rect?,
@@ -199,12 +204,40 @@ private fun Scrim(
     } else {
         snap()
     }
-    val animatedHoles = holes.mapIndexed { index, rect ->
-        key(index) {
-            HoleFrame(
-                rect = animateHoleRect(rect, holeSpec),
-                style = animateHoleStyle(styles[index], holeSpec, colorSpec)
-            )
+
+    val slots = remember { mutableStateListOf<HoleSlot>() }
+    SideEffect {
+        holes.indices.forEach { index ->
+            val existing = slots.find { it.index == index }
+            if (existing == null) slots.add(HoleSlot(index))
+            else if (existing.exiting) existing.exiting = false
+        }
+        slots.forEach { slot ->
+            if (slot.index !in holes.indices && !slot.exiting) slot.exiting = true
+        }
+    }
+
+    val animatedHoles = slots.map { slot ->
+        key(slot.index) {
+            LaunchedEffect(slot.exiting) {
+                if (slot.exiting) {
+                    slot.scale.animateTo(0f, holeSpec)
+                    slots.removeAll { it.index == slot.index }
+                } else {
+                    slot.scale.animateTo(1f, holeSpec)
+                }
+            }
+
+            val target = holes.getOrNull(slot.index) ?: slot.lastTarget
+            if (target != null) {
+                slot.lastTarget = target
+                HoleFrame(
+                    rect = animateHoleRect(target.rect, holeSpec).scaleAroundCenter(slot.scale.value),
+                    style = animateHoleStyle(target.style, holeSpec, colorSpec)
+                )
+            } else {
+                HoleFrame(Rect.Zero, HoleStyle(0f, 0f, Color.Transparent))
+            }
         }
     }
     val currentAnimatedHoles by rememberUpdatedState(animatedHoles)
@@ -247,7 +280,7 @@ private fun Scrim(
                         pass = PointerEventPass.Initial
                     )
                     val startPos = down.position
-                    val hole = currentHoles.firstOrNull { it.contains(startPos) }
+                    val hole = currentHoles.firstOrNull { it.rect.contains(startPos) }
                     val inContent = currentContentRect?.contains(startPos) == true
 
                     // 引导内容自身与放行模式的锚点只观察不消费，其余一律拦截
@@ -327,6 +360,35 @@ private data class HoleStyle(
  * 单个镂空的动画帧
  */
 private data class HoleFrame(val rect: Rect, val style: HoleStyle)
+
+/**
+ * 单个镂空的静态目标：锚点矩形与已解析样式
+ */
+private data class HoleTarget(val rect: Rect, val style: HoleStyle)
+
+/**
+ * 洞槽位：按目标序号跟踪入场/出场缩放与最近目标
+ */
+private class HoleSlot(val index: Int) {
+    var exiting by mutableStateOf(false)
+    var lastTarget: HoleTarget? = null
+    val scale = Animatable(0f)
+}
+
+/**
+ * 围绕矩形中心缩放，负值按 0 处理，避免出场回弹时翻转
+ */
+private fun Rect.scaleAroundCenter(scale: Float): Rect {
+    val s = scale.coerceAtLeast(0f)
+    if (s == 1f) return this
+    val c = center
+    return Rect(
+        lerp(c.x, left, s),
+        lerp(c.y, top, s),
+        lerp(c.x, right, s),
+        lerp(c.y, bottom, s)
+    )
+}
 
 /**
  * 引导内容容器，测量内容并按放置策略求解目标位置，
