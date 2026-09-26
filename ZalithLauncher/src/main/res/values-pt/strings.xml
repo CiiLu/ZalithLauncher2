@@ -1197,4 +1197,27 @@
     <string name="settings_gamepad_config_summary">Selecione o mapeamento do gamepad configuração a ser usada</string>
     <string name="versions_export_pack_min_memory">Memória mínima alocada</string>
     <string name="versions_export_pack_max_memory">Memória máxima alocada</string>
+
+    <string name="guide_main_welcome_title">Bem-vindo ao %s!</string>
+    <string name="guide_main_welcome_text">Vamos dar uma vista de olhos rápida às funções do ecrã principal.</string>
+    <string name="guide_main_account">Toque aqui para abrir o gestor de contas, onde pode adicionar ou gerir as suas contas do Minecraft</string>
+    <string name="guide_main_version_list">Toque aqui para abrir a lista de versões, onde todas as versões do jogo que instalar serão listadas</string>
+    <string name="guide_main_card_drag_title">Não gosta de onde o menu de ações está?</string>
+    <string name="guide_main_card_drag_text">Mantenha o cartão premido para o levantar, depois arraste e largue para o encaixar do outro lado</string>
+    <string name="guide_main_card_tip_title">Parece um pouco vazio por aqui?</string>
+    <string name="guide_main_card_tip_text">Não se preocupe, pode fixar conteúdos aqui como cartões e organizá-los livremente, desde que ofereça a opção “%s”</string>
+    <string name="guide_editor_welcome_title">Bem-vindo ao editor de layouts de controlo!</string>
+    <string name="guide_editor_welcome_text">Vamos ver rapidamente como o utilizar.</string>
+    <string name="guide_editor_menu_ball_title">Este é o botão do menu flutuante do editor de layouts de controlo</string>
+    <string name="guide_editor_menu_ball_text">Arraste-o para alterar a posição! Toque nele para abrir o menu do editor e a lista de camadas de controlo</string>
+    <string name="guide_editor_layer_list_title">Esta é a lista de camadas de controlo</string>
+    <string name="guide_editor_layer_list_text">Uma camada de controlo funciona como uma camada de imagem: é um contentor que guarda controlos. Pode organizar os controlos que adicionar em camadas separadas</string>
+    <string name="guide_editor_layer_list_note">Todas as camadas de controlo que criar serão listadas aqui</string>
+    <string name="guide_editor_create_layer">Toque neste botão para criar uma nova camada de controlo</string>
+    <string name="guide_editor_add_widgets_title">Adicione controlos aqui!</string>
+    <string name="guide_editor_add_widgets_text">Depois de selecionar uma camada de controlo, pode adicionar-lhe qualquer tipo de controlo</string>
+    <string name="guide_editor_styles_title">Quer alterar o aspeto dos seus controlos?</string>
+    <string name="guide_editor_styles_text">Pode criar aspetos para os seus controlos, para os reutilizar e alternar entre eles rapidamente</string>
+    <string name="guide_editor_preview">Utilize o modo de pré-visualização para testar o seu layout de controlos</string>
+    <string name="guide_editor_save">Quando terminar de editar, não se esqueça de guardar o layout de controlo!</string>
 </resources>

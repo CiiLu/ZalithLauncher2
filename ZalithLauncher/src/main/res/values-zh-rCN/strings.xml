@@ -1444,4 +1444,28 @@
     <string name="fm_property_folders">文件夹数</string>
     <string name="fm_calculating">计算中…</string>
     <string name="fm_name_conflict">与已有条目重名</string>
+
+
+    <string name="guide_main_welcome_title">欢迎使用 %s ！</string>
+    <string name="guide_main_welcome_text">我们来简单看看主界面的功能吧~</string>
+    <string name="guide_main_account">点击此处可进入账号管理页面，你可以添加或管理 Minecraft 账号</string>
+    <string name="guide_main_version_list">点击这里可打开版本列表，你将来安装的所有游戏版本都会在这里列举出来哦</string>
+    <string name="guide_main_card_drag_title">不太喜欢操作栏的位置？</string>
+    <string name="guide_main_card_drag_text">你可以长按卡片提起它，拖动并让它停靠到另一侧哦</string>
+    <string name="guide_main_card_tip_title">这里太空旷了？</string>
+    <string name="guide_main_card_tip_text">别担心，你可以将一些内容作为卡片放到这里来自由排布，只要它提供了“%s”选项</string>
+    <string name="guide_editor_welcome_title">欢迎使用控制布局编辑器！</string>
+    <string name="guide_editor_welcome_text">我们来简单了解一下如何使用它吧~</string>
+    <string name="guide_editor_menu_ball_title">这是控制布局编辑器的悬浮菜单</string>
+    <string name="guide_editor_menu_ball_text">拖动它可更换悬浮菜单的位置！请点击它打开菜单与控件层列表~</string>
+    <string name="guide_editor_layer_list_title">这是控件层列表</string>
+    <string name="guide_editor_layer_list_text">控件层就相当于图层，是承载控件的容器。你可以分层管理、控制你在控件层上添加的控件</string>
+    <string name="guide_editor_layer_list_note">你所添加的所有控件层会在此处列出~</string>
+    <string name="guide_editor_create_layer">点击此按钮创建新的控件层</string>
+    <string name="guide_editor_add_widgets_title">在这里添加控件！</string>
+    <string name="guide_editor_add_widgets_text">选中控件层之后，你可以为其添加任意类型的控件~</string>
+    <string name="guide_editor_styles_title">想调整控件的外观？</string>
+    <string name="guide_editor_styles_text">你可以为控件们创建一些外观，以便于快速复用、切换不同的外观</string>
+    <string name="guide_editor_preview">可通过预览功能来测试你的控制布局哦~</string>
+    <string name="guide_editor_save">完成编辑后，记得保存控制布局！</string>
 </resources>

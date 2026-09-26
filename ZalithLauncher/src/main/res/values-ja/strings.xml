@@ -1164,4 +1164,27 @@
     <string name="festivals_april_fools">エイプリルフールおめでとう！</string>
     <string name="festivals_christmas">メリークリスマス！</string>
     <string name="generic_edit">編集</string>
+
+    <string name="guide_main_welcome_title">ようこそ %s へ！</string>
+    <string name="guide_main_welcome_text">メイン画面の機能を簡単に見ていきましょう。</string>
+    <string name="guide_main_account">タップするとアカウント管理画面を開けます。Minecraft アカウントの追加や管理ができます</string>
+    <string name="guide_main_version_list">タップするとバージョンリストが開きます。インストールしたゲームバージョンはすべてここに表示されます</string>
+    <string name="guide_main_card_drag_title">操作メニューの場所が気に入らない？</string>
+    <string name="guide_main_card_drag_text">カードを長押しして持ち上げ、ドラッグ＆ドロップで反対側にドッキングできます</string>
+    <string name="guide_main_card_tip_title">ここ、少し寂しくない？</string>
+    <string name="guide_main_card_tip_text">ご安心ください。「%s」が提供されているコンテンツは、カードとしてここに自由に配置できます</string>
+    <string name="guide_editor_welcome_title">コントロールレイアウトエディターへようこそ！</string>
+    <string name="guide_editor_welcome_text">簡単な使い方を見ていきましょう。</string>
+    <string name="guide_editor_menu_ball_title">これがコントロールレイアウトエディターのフローティングメニューボタンです</string>
+    <string name="guide_editor_menu_ball_text">ドラッグすると位置を変更できます！タップするとメニューとコントロールレイヤーのリストを開けます</string>
+    <string name="guide_editor_layer_list_title">これはコントロールレイヤーのリストです</string>
+    <string name="guide_editor_layer_list_text">コントロールレイヤーはグラフィックのレイヤーのようなもので、コントロールをまとめる容器です。コントロールをレイヤーごとに分けて管理できます</string>
+    <string name="guide_editor_layer_list_note">追加したコントロールレイヤーはすべてここに表示されます</string>
+    <string name="guide_editor_create_layer">このボタンをタップして新しいコントロールレイヤーを作成します</string>
+    <string name="guide_editor_add_widgets_title">ここでコントロールを追加できます！</string>
+    <string name="guide_editor_add_widgets_text">コントロールレイヤーを選択すると、任意の種類のコントロールを追加できます</string>
+    <string name="guide_editor_styles_title">コントロールの見た目を変えたいときは？</string>
+    <string name="guide_editor_styles_text">コントロールの外観を作成しておけば、簡単に再利用や切り替えができます</string>
+    <string name="guide_editor_preview">プレビュー機能を使ってコントロールレイアウトを試してみましょう。</string>
+    <string name="guide_editor_save">編集が終わったら、コントロールレイアウトの保存を忘れずに！</string>
 </resources>
