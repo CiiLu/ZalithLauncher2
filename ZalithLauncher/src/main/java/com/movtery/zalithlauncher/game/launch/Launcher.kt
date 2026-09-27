@@ -183,13 +183,6 @@ abstract class Launcher(
         progressFinalUserArgs(args)
 
         args.addAll(jvmArgs)
-
-        //MioLibPatcher 的 -javaagent 注册顺序需置于 cacio agent 之后：
-        //transformer 链按注册顺序介入类加载，顺序不一致会改变 JDK 内部类
-        //（如 WeakPairMap）首次定义时的干预行为，在 jre25 上引发
-        //ClassCircularityError 导致 RFB 入口启动失败
-        args.add("-javaagent:${LibPath.MIO_LIB_PATCHER.absolutePath}")
-
         args.add(0, "$runtimeHome/bin/java")
 
         LoggerBridge.appendTitle("JVM Args")
