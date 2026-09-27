@@ -18,32 +18,28 @@
 
 package com.movtery.zalithlauncher.ui.theme.festivals
 
-import android.annotation.SuppressLint
 import android.view.MotionEvent
 
 /**
  * 点击彩蛋的输入观察器
  */
 object FestivalTapObserver {
-    @SuppressLint("StaticFieldLeak")
-    private var engine: FestivalEffectsEngine? = null
+    private val listeners = ArrayList<(Float, Float) -> Unit>()
 
-    /** 效果需要点击交互时由效果层调用 */
-    fun attach(target: FestivalEffectsEngine) {
-        engine = target
-    }
-
-    /** 效果停用或离开组合时解除 */
-    fun detach(target: FestivalEffectsEngine) {
-        if (engine === target) {
-            engine = null
-        }
+    /**
+     * 订阅按下事件
+     */
+    fun subscribe(onTap: (x: Float, y: Float) -> Unit): () -> Unit {
+        listeners.add(onTap)
+        return { listeners.remove(onTap) }
     }
 
     fun observe(event: MotionEvent) {
-        val target = engine ?: return
-        if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-            target.burstAt(event.x, event.y)
+        if (event.actionMasked != MotionEvent.ACTION_DOWN) return
+        val x = event.x
+        val y = event.y
+        listeners.toList().forEach { listener ->
+            listener(x, y)
         }
     }
 }
