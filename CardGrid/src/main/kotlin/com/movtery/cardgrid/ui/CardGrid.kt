@@ -52,6 +52,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerEventTimeoutCancellationException
@@ -82,6 +84,11 @@ import kotlin.math.sqrt
 private val GridFadeExtent = 72.dp
 /** 网格线的最大不透明度（卡片矩形处） */
 private const val GridLineMaxAlpha = 0.35f
+
+/** 会话卡幽灵的透明度 */
+private const val GhostAlpha = 0.5f
+/** 空槽描边的不透明度 */
+private const val SlotStrokeAlpha = 0.5f
 
 /** 调整态工具条的高度 */
 private val ToolbarHeight = 40.dp
@@ -282,7 +289,9 @@ private fun CardSlot(
     ) {
         CardSurface(
             interaction = interaction,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .then(if (state.isSessionCard(card.id)) Modifier.graphicsLayer { alpha = GhostAlpha } else Modifier),
             shape = card.type.shape ?: MaterialTheme.shapes.extraLarge,
             containerColor = containerColor,
             contentColor = contentColor,
@@ -394,12 +403,19 @@ private fun CardGridGlowEffect(state: CardGridState, modifier: Modifier = Modifi
     val cell = state.cellPx
     val columns = state.geometry.columns
     Canvas(modifier = modifier.zIndex(0.1f)) {
-        // 吸附落点高亮
+        // 空槽落点：邻居让位后开出的空位，以浅色填充与淡描边表达
         drawRoundRect(
-            color = primary.copy(alpha = 0.08f),
+            color = primary.copy(alpha = 0.06f),
             topLeft = previewRect.topLeft,
             size = previewRect.size,
             cornerRadius = CornerRadius(16.dp.toPx())
+        )
+        drawRoundRect(
+            color = primary.copy(alpha = SlotStrokeAlpha),
+            topLeft = previewRect.topLeft,
+            size = previewRect.size,
+            cornerRadius = CornerRadius(16.dp.toPx()),
+            style = Stroke(width = 1.dp.toPx())
         )
 
         val fadePx = GridFadeExtent.toPx()

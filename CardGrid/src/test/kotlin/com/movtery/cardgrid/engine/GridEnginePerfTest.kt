@@ -80,7 +80,10 @@ class GridEnginePerfTest {
 
         // 预热 JIT
         repeat(50) {
-            GridEngine.resolveDisplacements(mover, columns, others)
+            GridEngine.resolveDisplacements(
+                mover, columns, others,
+                IntOffset(mover.x + mover.width / 2, mover.y + mover.height / 2)
+            )
         }
 
         // 模拟一次贯穿整张网格的拖动：从左上到右下逐步换格
@@ -93,9 +96,12 @@ class GridEnginePerfTest {
                     x = ((columns - mover.width) * t).toInt(),
                     y = ((maxY - mover.height) * t).toInt()
                 )
-                val displaced = GridEngine.resolveDisplacements(preview, columns, others)
-                val relocated = others.map { displaced[it.id] ?: it }
-                assertNoOverlap(relocated + preview)
+                val pointer = IntOffset(preview.x + preview.width / 2, preview.y + preview.height / 2)
+                val displaced = GridEngine.resolveDisplacements(preview, columns, others, pointer)
+                if (displaced != null) {
+                    val relocated = others.map { displaced[it.id] ?: it }
+                    assertNoOverlap(relocated + preview)
+                }
             }
         }
         val perCallMs = warm.toDouble() / steps

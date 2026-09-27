@@ -171,6 +171,9 @@ class CardGridState internal constructor(
     var displaced by mutableStateOf<Map<String, CardRect>>(emptyMap())
         private set
 
+    /** 被压卡片的让位方向锁定表：卡片持续被压住期间方向保持稳定，避免指针扫过卡片中心时来回翻转 */
+    private val lockedDirections = mutableMapOf<String, IntOffset>()
+
     /** 布局发生结算后的回调（用于持久化） */
     var onLayoutCommitted: () -> Unit = {}
 
@@ -419,18 +422,43 @@ class CardGridState internal constructor(
             (topLeft.y / cellPx).roundToInt().coerceAtLeast(0)
         )
         val preview = current.card.layout.positionAt(target)
-        applyPreview(
-            preview,
-            GridEngine.resolveDisplacements(
-                moving = preview,
-                columns = geometry.columns,
-                cards = layouts(),
-                pointer = IntOffset(
-                    (pointer.x / cellPx).roundToInt(),
-                    (pointer.y / cellPx).roundToInt()
-                )
-            )
+        val pointerCell = IntOffset(
+            (pointer.x / cellPx).roundToInt(),
+            (pointer.y / cellPx).roundToInt()
         )
+        lockDisplacementDirections(preview, pointerCell)
+        val displacements = GridEngine.resolveDisplacements(
+            moving = preview,
+            columns = geometry.columns,
+            cards = layouts(),
+            pointer = pointerCell,
+            directions = lockedDirections
+        )
+        if (displacements == null) {
+            // 引擎无法确定让位方向（方向信息缺失）时兜底：落点钳制到最近可行空位
+            val clamped = GridEngine.findNearestFreeSlot(
+                width = current.card.layout.width,
+                height = current.card.layout.height,
+                origin = target,
+                columns = geometry.columns,
+                obstacles = layouts().filterNot { it.id == current.card.id }
+            ) ?: return
+            applyPreview(current.card.layout.positionAt(clamped), emptyMap())
+            return
+        }
+        applyPreview(preview, displacements)
+    }
+
+    /** 锁定持续被压卡片的让位方向，脱离被压的卡片解除锁定 */
+    private fun lockDisplacementDirections(preview: CardRect, pointerCell: IntOffset) {
+        val sessionId = session?.card?.id
+        val overlapped = layouts().filter { it.id != sessionId && it.intersects(preview) }
+        lockedDirections.keys.retainAll(overlapped.mapTo(mutableSetOf()) { it.id })
+        overlapped.forEach { card ->
+            lockedDirections.getOrPut(card.id) {
+                GridEngine.displacementDirection(pointerCell, card)
+            }
+        }
     }
 
     /** 松手：结算落位与被挤开的卡片，压实并持久化 */
@@ -637,6 +665,7 @@ class CardGridState internal constructor(
         dragRawRect = null
         pointerPosition = null
         displaced = emptyMap()
+        lockedDirections.clear()
     }
 
     private fun reflowTo(newColumns: Int, oldColumns: Int) {
