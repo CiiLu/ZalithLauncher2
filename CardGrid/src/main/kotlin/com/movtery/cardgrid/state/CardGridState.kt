@@ -188,7 +188,7 @@ class CardGridState internal constructor(
         stiffness = Spring.StiffnessMediumLow
     )
 
-    /** 默认空间动画（结算、压实） */
+    /** 默认空间动画（结算、重排） */
     internal var defaultSpec: AnimationSpec<Rect> = spring(
         dampingRatio = Spring.DampingRatioNoBouncy,
         stiffness = Spring.StiffnessMediumLow
@@ -333,16 +333,13 @@ class CardGridState internal constructor(
         return card
     }
 
-    /** 移除一张卡片并压实剩余布局 */
+    /** 移除一张卡片，其余布局保持原样 */
     fun removeCard(id: String) {
         val removed = cards.firstOrNull { it.id == id } ?: return
-        val remaining = cards.filterNot { it.id == id }
-        val compacted = GridEngine.compact(remaining.map { it.layout }).associateBy { it.id }
-        cards = remaining.map { card -> card.copy(layout = compacted.getValue(card.id)) }
+        cards = cards.filterNot { it.id == id }
         animators.remove(removed.id)
         if (adjustingCardId == id) adjustingCardId = null
         if (session?.card?.id == id) endSession()
-        cards.forEach { card -> animateTo(card, effectiveLayout(card), defaultSpec) }
         commitLayout()
         onCardRemoved(id)
     }
@@ -599,7 +596,7 @@ class CardGridState internal constructor(
         }
     }
 
-    /** 提交会话结果：沿用会话过程中的让位结算，压实并持久化 */
+    /** 提交会话结果：沿用会话过程中的让位结算并持久化 */
     private fun commit(target: CardRect) {
         val current = session ?: return
         // endSession 会清空跟手矩形，必须先捕获供动画器吸附
@@ -607,23 +604,16 @@ class CardGridState internal constructor(
         val settled = displaced
         cards = cards.map { card ->
             when {
-                card.id == current.card.id -> card.copy(layout = target)
+                card.id == current.card.id -> card.copy(
+                    layout = target,
+                    //用户结算的跨度成为新的折算基准
+                    reflowBase = ReflowBase(target.width, target.height, geometry.columns)
+                )
                 else -> settled[card.id]?.let { card.copy(layout = it) } ?: card
             }
         }
-        cards = compactCards(cards)
-        //压实可能改变会话卡的最终落位，以列表中的最终布局为准
-        val finalLayout = cards.firstOrNull { it.id == current.card.id }?.layout ?: target
-        //用户结算的跨度成为新的折算基准
-        cards = cards.map { card ->
-            if (card.id == current.card.id) {
-                card.copy(reflowBase = ReflowBase(card.layout.width, card.layout.height, geometry.columns))
-            } else {
-                card
-            }
-        }
         endSession()
-        settleSessionCard(current.card, rawRect, finalLayout)
+        settleSessionCard(current.card, rawRect, target)
         cards.filterNot { it.id == current.card.id }
             .forEach { animateTo(it, effectiveLayout(it), defaultSpec) }
         commitLayout()
@@ -647,12 +637,6 @@ class CardGridState internal constructor(
         dragRawRect = null
         pointerPosition = null
         displaced = emptyMap()
-    }
-
-    /** 垂直压实全部卡片，保持实例映射 */
-    private fun compactCards(list: List<GridCard>): List<GridCard> {
-        val compacted = GridEngine.compact(list.map { it.layout }).associateBy { it.id }
-        return list.map { card -> card.copy(layout = compacted.getValue(card.id)) }
     }
 
     private fun reflowTo(newColumns: Int, oldColumns: Int) {

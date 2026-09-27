@@ -102,6 +102,15 @@ class CardGridStateTest {
     }
 
     @Test
+    fun testSeedPreservesVerticalGaps() {
+        val state = seededState(
+            CardRect("A", 0, 0, 4, 4),
+            CardRect("B", 0, 8, 4, 4)
+        )
+        assertEquals(CardRect("B", 0, 8, 4, 4), layoutOf(state, "B"))
+    }
+
+    @Test
     fun testSeedDropsUnknownType() {
         val state = state()
         state.seed(
@@ -200,7 +209,7 @@ class CardGridStateTest {
     }
 
     @Test
-    fun testRemoveCardCompactsAndNotifies() {
+    fun testRemoveCardLeavesHoleAndNotifies() {
         var removed: String? = null
         var committed = false
         val state = seededState(
@@ -213,7 +222,8 @@ class CardGridStateTest {
         state.removeCard("A")
         assertEquals("A", removed)
         assertTrue(committed)
-        assertEquals(CardRect("B", 0, 0, 4, 4), layoutOf(state, "B"))
+        // 其余卡片保持原位，A 留下的空洞不上浮填补
+        assertEquals(CardRect("B", 0, 8, 4, 4), layoutOf(state, "B"))
     }
 
     // ---------- 命中测试 ----------
