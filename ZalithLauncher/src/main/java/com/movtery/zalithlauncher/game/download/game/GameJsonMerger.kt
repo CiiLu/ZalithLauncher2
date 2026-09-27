@@ -18,6 +18,7 @@
 
 package com.movtery.zalithlauncher.game.download.game
 
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.movtery.zalithlauncher.game.addons.modloader.ModLoader
 import com.movtery.zalithlauncher.game.download.game.models.LaunchFor
@@ -104,6 +105,8 @@ fun mergeGameJson(
     // ----------------------------------------------------------
 
     val outputJson = minecraftJson.deepCopy()
+
+    val vanillaLibraries = outputJson.remove("libraries") as? JsonArray
     listOfNotNull(
         optiFineJson,
         forgeJson, neoForgeJson,
@@ -114,6 +117,10 @@ fun mergeGameJson(
         json.remove("releaseTime")
         json.remove("time")
         outputJson.merge(json)
+    }
+    vanillaLibraries?.let { libs ->
+        (outputJson.get("libraries") as? JsonArray)?.addAll(libs)
+            ?: outputJson.add("libraries", libs)
     }
 
     if (realArgs.isNotBlank()) {
