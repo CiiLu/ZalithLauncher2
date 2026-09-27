@@ -215,6 +215,9 @@ class LaunchArgs(
 
         argsList.addAll(getCacioJavaArgs(runtime.javaVersion == 8))
 
+        //MioLibPatcher 需作为 JVM 选项注册在 cacio agent 之后、-cp 之前
+        argsList.add("-javaagent:${LibPath.MIO_LIB_PATCHER.absolutePath}")
+
         val configFilePath = version.getVersionPath().child("log4j2.xml")
         if (!configFilePath.exists()) {
             val is7 = (version.getVersionInfo()?.minecraftVersion ?: "0.0").isLowerTo("1.12")
