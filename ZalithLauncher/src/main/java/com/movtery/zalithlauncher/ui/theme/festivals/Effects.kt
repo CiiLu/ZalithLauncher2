@@ -66,9 +66,15 @@ fun FestivalEffects(
 
     val tapsEnabled = effectTypes.any(FestivalEffectType::supportsTapBurst)
     DisposableEffect(tapsEnabled) {
-        if (tapsEnabled) FestivalTapObserver.attach(engine)
+        val unsubscribe = if (tapsEnabled) {
+            FestivalTapObserver.subscribe { x, y ->
+                engine.burstAt(x, y)
+            }
+        } else {
+            null
+        }
         onDispose {
-            if (tapsEnabled) FestivalTapObserver.detach(engine)
+            unsubscribe?.invoke()
         }
     }
 
