@@ -423,53 +423,6 @@ class GridEngineTest {
         assertEquals(card("A", 0, 0, 6, 4), result.layout)
     }
 
-    // ---------- 垂直压实 ----------
-
-    @Test
-    fun testCompactFillsVerticalGap() {
-        val cards = listOf(
-            card("A", 0, 0, 8, 4),
-            card("B", 0, 8, 8, 4)
-        )
-        val compacted = GridEngine.compact(cards)
-        // B 上浮填补 A 与 B 之间的空隙
-        assertEquals(4, compacted.first { it.id == "B" }.y)
-    }
-
-    @Test
-    fun testCompactBlockedByOtherCard() {
-        val cards = listOf(
-            card("A", 0, 0, 8, 4),
-            card("B", 0, 8, 8, 4),
-            card("C", 0, 4, 8, 4)
-        )
-        val compacted = GridEngine.compact(cards)
-        val a = compacted.first { it.id == "A" }
-        val b = compacted.first { it.id == "B" }
-        val c = compacted.first { it.id == "C" }
-        assertEquals(0, a.y)
-        assertEquals(4, c.y)
-        // C 挡在中间，B 只能压在 C 下方
-        assertEquals(8, b.y)
-    }
-
-    @Test
-    fun testCompactPreservesHorizontalPosition() {
-        val cards = listOf(card("D", 8, 8, 8, 4))
-        val compacted = GridEngine.compact(cards)
-        assertEquals(card("D", 8, 0, 8, 4), compacted.first())
-    }
-
-    @Test
-    fun testCompactAlreadyCompactedIsStable() {
-        val cards = listOf(
-            card("A", 0, 0, 8, 4),
-            card("B", 8, 0, 8, 4),
-            card("C", 0, 4, 8, 4)
-        )
-        assertEquals(cards.sortedWith(compareBy({ it.y }, { it.x })), GridEngine.compact(cards))
-    }
-
     // ---------- 重排 ----------
 
     @Test
@@ -559,12 +512,16 @@ class GridEngineTest {
     }
 
     @Test
-    fun testValidateEndsCompacted() {
+    fun testValidatePreservesVerticalGaps() {
         val result = GridEngine.validate(
-            listOf(card("A", 4, 8, 8, 4)),
+            listOf(
+                card("A", 0, 0, 8, 4),
+                card("B", 0, 8, 8, 4)
+            ),
             columns = 16
         )
-        assertEquals(0, result.first().y)
+        assertEquals(card("A", 0, 0, 8, 4), result.first { it.id == "A" })
+        assertEquals(card("B", 0, 8, 8, 4), result.first { it.id == "B" })
     }
 
     // ---------- 汇总 ----------

@@ -178,7 +178,7 @@ class GridEnginePerfTest {
         assertEquals("Duplicate ids must be dropped", 100, result.size)
         assertNoOverlap(result)
         assertTrue(result.all { GridEngine.isInGrid(it, columns) })
-        assertTrue("Validation result must be compacted", result == GridEngine.compact(result))
+        assertTrue("Validation result must be stable", result == GridEngine.validate(result, columns))
         println("validate: ${elapsed}ms / 100 calls = ${"%.3f".format(elapsed / 100.0)}ms per call (120 dirty cards)")
         assertTrue("validate took too long: ${elapsed / 100.0} ms", elapsed / 100.0 < 50.0)
     }
@@ -201,19 +201,5 @@ class GridEnginePerfTest {
         }
         println("reflow (16->24 + 24->16): ${elapsed}ms / 200 round trips = ${"%.3f".format(elapsed / 400.0)}ms per call (100 cards)")
         assertTrue("reflow took too long: ${elapsed / 400.0} ms", elapsed / 400.0 < 50.0)
-    }
-
-    @Test
-    fun testCompactOnTallGridIsStableAndFast() {
-        val cards = generateGrid(count = 80, columns = 16, seed = 11L)
-        val elapsed = measureMs {
-            repeat(1000) {
-                val once = GridEngine.compact(cards)
-                val twice = GridEngine.compact(once)
-                assertEquals("compact must be idempotent", once, twice)
-            }
-        }
-        println("compact x2 (idempotency): ${elapsed}ms / 1000 iterations (80 cards)")
-        assertTrue("compact took too long: ${elapsed / 1000.0} ms", elapsed / 1000.0 < 20.0)
     }
 }

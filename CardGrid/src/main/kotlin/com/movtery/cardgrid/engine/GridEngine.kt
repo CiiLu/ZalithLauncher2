@@ -30,7 +30,7 @@ import kotlin.math.roundToInt
  *
  * 缩放使用推箱式语义——沿被拖边把挡路的卡片推开成链，推不动时逐格收缩跨度；
  * 拖动使用挤压让位语义——被压住的卡片各自迁移到最近的空闲位置，不级联影响其他卡片；
- * 任何时刻布局都处于垂直压实状态。
+ * 卡片间允许纵向留空，布局不做自动压实；最上最左贪心打包仅用于空闲落位与重排。
  */
 object GridEngine {
 
@@ -324,26 +324,6 @@ object GridEngine {
     }
 
     /**
-     * 垂直压实：按阅读顺序处理，每张卡片在保持横向位置不变的前提下
-     * 尽可能上浮，直到贴近网格顶部或压在已有卡片下方。
-     * 压实后任何卡片都无法再向上移动；行内与行尾的横向空位保留。
-     */
-    fun compact(cards: List<CardRect>): List<CardRect> {
-        val sorted = cards.sortedWith(readingOrder())
-        val placed = mutableListOf<CardRect>()
-        for (card in sorted) {
-            var y = 0
-            while (true) {
-                val blocking = placed.firstOrNull { it.intersects(card.positionAt(IntOffset(card.x, y))) }
-                if (blocking == null) break
-                y = blocking.bottom
-            }
-            placed.add(card.positionAt(IntOffset(card.x, y)))
-        }
-        return placed
-    }
-
-    /**
      * 按阅读顺序（先上后下、先左后右）贪心重排，
      * 用于网格宽度变化后的布局迁移：卡片宽高按新旧列数比例折算，
      * 以 [limits] 声明的边界钳制，再逐个放入最上最左的空位。
@@ -368,8 +348,8 @@ object GridEngine {
     }
 
     /**
-     * 加载校验：钳制越界与非法的卡片、化解卡片间的重叠，
-     * 最后执行一次垂直压实。重复 id 的卡片仅保留最先出现的一个。
+     * 加载校验：钳制越界与非法的卡片、化解卡片间的重叠，其余布局原样保留，
+     * 按阅读顺序返回。重复 id 的卡片仅保留最先出现的一个。
      */
     fun validate(
         cards: List<CardRect>,
@@ -402,7 +382,7 @@ object GridEngine {
             }
             settled.add(card.positionAt(position))
         }
-        return compact(settled)
+        return settled.sortedWith(readingOrder())
     }
 
     private fun readingOrder() = compareBy<CardRect>({ it.y }, { it.x })
