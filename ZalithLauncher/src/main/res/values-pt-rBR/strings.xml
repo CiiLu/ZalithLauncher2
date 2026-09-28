@@ -1435,4 +1435,5 @@
     <string name="guide_tip_finish">Toque em qualquer área em branco para finalizar o guia</string>
     <string name="festivals_halloween">Feliz dia das bruxas!</string>
     <string name="festivals_valentines">Feliz Dia dos Namorados!</string>
+    <string name="launch_check_mods">Verificando mods</string>
 </resources>
