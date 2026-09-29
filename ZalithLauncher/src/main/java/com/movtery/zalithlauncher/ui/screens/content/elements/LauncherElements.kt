@@ -43,10 +43,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -96,12 +100,14 @@ import com.movtery.zalithlauncher.utils.checkStoragePermissions
 import com.movtery.zalithlauncher.utils.file.InvalidFilenameException
 import com.movtery.zalithlauncher.utils.file.checkFilenameValidity
 import com.movtery.zalithlauncher.utils.hasStoragePermission
+import com.movtery.zalithlauncher.utils.image.isGifFile
 import com.movtery.zalithlauncher.viewmodel.BackgroundViewModel
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
 import com.movtery.zalithlauncher.viewmodel.EventViewModel
 import com.movtery.zalithlauncher.viewmodel.LaunchGameViewModel
 import com.movtery.zalithlauncher.viewmodel.sendToast
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import java.io.File
@@ -620,8 +626,36 @@ private fun BackgroundImage(
             .build()
     }
 
+    //GIF 的动画帧由绘制 → invalidateSelf → 再绘制的自续循环推进，
+    //任何一帧失效丢失都会让动画永久冻结，由帧时钟显式逐帧驱动重绘，保证循环自愈
+    val isAnimatedState = remember(refreshTrigger) { mutableStateOf(false) }
+    LaunchedEffect(refreshTrigger) {
+        isAnimatedState.value = withContext(Dispatchers.IO) {
+            imageFile.isGifFile()
+        }
+    }
+    val isAnimated = isAnimatedState.value
+
+    val frameTick = remember { mutableIntStateOf(0) }
+    if (isAnimated) {
+        LaunchedEffect(Unit) {
+            while (isActive) {
+                withFrameNanos { }
+                frameTick.intValue++
+            }
+        }
+    }
+
     AsyncImage(
-        modifier = modifier,
+        modifier = modifier.then(
+            if (isAnimated) {
+                Modifier.drawBehind {
+                    frameTick.intValue
+                }
+            } else {
+                Modifier
+            }
+        ),
         model = request,
         imageLoader = imageLoader,
         contentDescription = null,
