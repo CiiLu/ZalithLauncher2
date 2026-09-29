@@ -607,6 +607,9 @@
     <string name="cape_name_zombie_horse">Zombie Horse</string>
     <string name="cape_name_builder">Builder</string>
     <string name="cape_name_crafter">Crafter</string>
+    <string name="cape_name_twisted">Twisted</string>
+    <string name="cape_name_hero">Hero</string>
+    <string name="cape_name_aurora">Aurora</string>
     <!-- File Management -->
     <string name="files_back_to_parent">Back</string>
     <string name="files_create_dir">Create Folder</string>
