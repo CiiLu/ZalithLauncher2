@@ -552,6 +552,9 @@
     <string name="cape_name_zombie_horse">殭屍馬披風</string>
     <string name="cape_name_builder">建造者披風</string>
     <string name="cape_name_crafter">工匠披風</string>
+    <string name="cape_name_twisted">扭曲披風</string>
+    <string name="cape_name_hero">英雄披風</string>
+    <string name="cape_name_aurora">極光披風</string>
     <!--  檔案管理  -->
     <string name="files_back_to_parent">返回上一層</string>
     <string name="files_create_dir">建立目錄</string>
